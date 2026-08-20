@@ -1,0 +1,17 @@
+GEONAMES DATA NOTICE
+
+This project includes geographical data derived from GeoNames.
+
+Attribution:
+GeoNames — https://www.geonames.org/
+
+License:
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+https://creativecommons.org/licenses/by/4.0/
+
+The GeoNames-derived data used by this project may be selected, filtered, reformatted, converted, or otherwise prepared for use by the application. Any such project-specific processing or modification is not attributed to GeoNames.
+
+GeoNames provides its data on an “as is” basis and does not warrant accuracy, timeliness, or completeness.
+
+Official GeoNames download and licensing information:
+https://www.geonames.org/export/

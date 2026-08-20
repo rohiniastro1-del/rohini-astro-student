@@ -1,0 +1,37 @@
+.packages/
+.tmp/
+.upload/
+.venv/
+__pycache__/
+*.pyc
+desktop.ini
+.rohini-runtime/
+.rohini-desktop.out.log
+.rohini-desktop.err.log
+.rohini-desktop.crash.log
+.rohini-server.crash.log
+.rohini-desktop.state.json
+.rohini-desktop.state.json.tmp
+.rohini-board-memory.json
+.rohini-board-memory.json.tmp
+.rohini-board-two-memory.json
+.rohini-board-two-memory.json.tmp
+.rohini-horoscopes-last-folder.txt
+.rohini-dev.pid
+.rohini-ready
+
+# Локални резервни копия на други версии — не се публикуват.
+Рохини Астро онлайн/
+Правни промени 2026-08-11/
+Промяна датник 2026-08-11/
+
+# Вътрешни работни/референтни документи — не влизат в публичния код.
+AGENTS.md
+РЕФЕРЕНТНИ НАСТРОЙКИ НА ИЗЧИСЛЕНИЯТА.md
+
+# Временен дизайнерски preview — не е част от работещата програма.
+_badge_preview.html
+
+# Колекцията с хороскопи — временно не се публикува, докато не се провери
+# произходът на данните и условията за повторно разпространение.
+Хороскопи/

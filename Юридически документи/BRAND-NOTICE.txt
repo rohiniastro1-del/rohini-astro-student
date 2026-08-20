@@ -1,0 +1,7 @@
+ROHINI ASTRO — BRAND NOTICE
+Rohini Astro, Rohini Astro Student, the associated logos, icons and visual branding are identifiers of the Rohini Astro project.
+The GNU Affero General Public License applicable to the software source code does not grant trademark rights in the names Rohini Astro, Rohini Astro Student, or in the associated logos and branding.
+Permission to copy, modify and redistribute the software under the AGPL does not imply permission to present a modified or redistributed version as an official Rohini Astro release, or to imply sponsorship, endorsement or affiliation.
+Modified versions and forks must be clearly identified as such and must not be represented as official releases of Rohini Astro.
+Factual references to Rohini Astro that are reasonably necessary to identify the original project, copyright notices, licensing information, source provenance or modifications are not prohibited by this notice.
+Nothing in this notice limits any rights granted under the GNU Affero General Public License with respect to the software itself.

@@ -1,0 +1,23 @@
+TIMEZONEFINDER — SOFTWARE AND DATA NOTICE
+
+Software:
+timezonefinder 8.2.2
+
+The timezonefinder software is licensed under the MIT License.
+
+Upstream software source and license:
+https://github.com/jannikmi/timezonefinder
+https://github.com/jannikmi/timezonefinder/blob/master/LICENSE
+
+Timezone boundary data:
+The timezone boundary data distributed with timezonefinder is separately licensed under the Open Database License (ODbL) 1.0 and follows the base dataset from timezone-boundary-builder.
+
+Upstream data license:
+https://github.com/jannikmi/timezonefinder/blob/master/DATA_LICENSE
+
+timezone-boundary-builder:
+https://github.com/evansiroky/timezone-boundary-builder
+
+Any binary or installer distribution that contains timezonefinder software or its bundled timezone boundary database must also include the applicable upstream software and data license materials required by those licenses.
+
+References in this notice are provided solely for licensing and attribution and do not imply endorsement or affiliation.

@@ -1,0 +1,1562 @@
+[
+  {
+    "name": "Аврен",
+    "lat": 43.1167,
+    "lon": 27.6667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Айтос",
+    "lat": 42.7032,
+    "lon": 27.2546,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Аксаково",
+    "lat": 43.2591,
+    "lon": 27.8176,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Алфатар",
+    "lat": 43.9469,
+    "lon": 27.2859,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Антон",
+    "lat": 42.735,
+    "lon": 24.2596,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Антоново",
+    "lat": 43.1502,
+    "lon": 26.1603,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Априлци",
+    "lat": 42.8414,
+    "lon": 24.9176,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ардино",
+    "lat": 41.5832,
+    "lon": 25.1337,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Асеновград",
+    "lat": 42.0167,
+    "lon": 24.8667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Балчик",
+    "lat": 43.4217,
+    "lon": 28.1585,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Баните",
+    "lat": 41.6167,
+    "lon": 25.0167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Банско",
+    "lat": 41.8361,
+    "lon": 23.4874,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Батак",
+    "lat": 41.9431,
+    "lon": 24.2183,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Белене",
+    "lat": 43.6506,
+    "lon": 25.1343,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Белица",
+    "lat": 41.9508,
+    "lon": 23.5583,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Белово",
+    "lat": 42.2139,
+    "lon": 24.0173,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Белоградчик",
+    "lat": 43.6272,
+    "lon": 22.6836,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Белослав",
+    "lat": 43.1872,
+    "lon": 27.7035,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Берковица",
+    "lat": 43.2374,
+    "lon": 23.1251,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Благоевград",
+    "lat": 42.0146,
+    "lon": 23.098,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бобов Дол",
+    "lat": 42.3638,
+    "lon": 22.9983,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бобошево",
+    "lat": 42.1532,
+    "lon": 23.0004,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Божурище",
+    "lat": 42.763,
+    "lon": 23.1973,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бойница",
+    "lat": 43.9573,
+    "lon": 22.5324,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бойчиновци",
+    "lat": 43.4706,
+    "lon": 23.335,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Болярово",
+    "lat": 42.1487,
+    "lon": 26.8102,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Борино",
+    "lat": 41.6853,
+    "lon": 24.2902,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Борован",
+    "lat": 43.4296,
+    "lon": 23.7533,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Борово",
+    "lat": 43.498,
+    "lon": 25.8082,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ботевград",
+    "lat": 42.908,
+    "lon": 23.7927,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Братя Даскалови",
+    "lat": 42.3015,
+    "lon": 25.2121,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Брацигово",
+    "lat": 42.0239,
+    "lon": 24.3756,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Брегово",
+    "lat": 44.1519,
+    "lon": 22.6388,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Брезник",
+    "lat": 42.7409,
+    "lon": 22.9072,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Брезово",
+    "lat": 42.3467,
+    "lon": 25.0762,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Брусарци",
+    "lat": 43.6632,
+    "lon": 23.0669,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бургас",
+    "lat": 42.5065,
+    "lon": 27.4689,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бяла",
+    "lat": 42.8743,
+    "lon": 27.8886,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Бяла Слатина",
+    "lat": 43.4667,
+    "lon": 23.9333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Варна",
+    "lat": 43.2191,
+    "lon": 27.9102,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Велики Преслав",
+    "lat": 43.1667,
+    "lon": 26.8167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Велико Търново",
+    "lat": 43.0812,
+    "lon": 25.629,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Велинград",
+    "lat": 42.0275,
+    "lon": 23.9916,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Венец",
+    "lat": 43.55,
+    "lon": 26.9333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ветово",
+    "lat": 43.7,
+    "lon": 26.2667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ветрино",
+    "lat": 43.3167,
+    "lon": 27.4333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Видин",
+    "lat": 43.9916,
+    "lon": 22.8824,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Враца",
+    "lat": 43.2105,
+    "lon": 23.5631,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Вълчедръм",
+    "lat": 43.6928,
+    "lon": 23.4452,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Вълчидол",
+    "lat": 43.4,
+    "lon": 27.55,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Върбица",
+    "lat": 43.0,
+    "lon": 26.6333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Вършец",
+    "lat": 43.1936,
+    "lon": 23.2868,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Габрово",
+    "lat": 42.8742,
+    "lon": 25.3182,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Генерал Тошево",
+    "lat": 43.7012,
+    "lon": 28.0379,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Георги Дамяново",
+    "lat": 43.3861,
+    "lon": 23.0306,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Главиница",
+    "lat": 43.9167,
+    "lon": 26.8333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Годеч",
+    "lat": 43.0168,
+    "lon": 23.0485,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Горна Малина",
+    "lat": 42.6833,
+    "lon": 23.7,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Горна Оряховица",
+    "lat": 43.1278,
+    "lon": 25.7017,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Гоце Делчев",
+    "lat": 41.5667,
+    "lon": 23.7333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Грамада",
+    "lat": 43.8374,
+    "lon": 22.6528,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Гулянци",
+    "lat": 43.6411,
+    "lon": 24.6937,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Гурково",
+    "lat": 42.6667,
+    "lon": 25.8,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Гълъбово",
+    "lat": 42.0167,
+    "lon": 24.7167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Гърмен",
+    "lat": 41.6,
+    "lon": 23.8167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Две Могили",
+    "lat": 43.5926,
+    "lon": 25.8749,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Девин",
+    "lat": 41.7433,
+    "lon": 24.4,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Девня",
+    "lat": 43.2222,
+    "lon": 27.5694,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Джебел",
+    "lat": 41.4957,
+    "lon": 25.3036,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Димитровград",
+    "lat": 42.05,
+    "lon": 25.6,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Димово",
+    "lat": 43.7417,
+    "lon": 22.7269,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Добрич",
+    "lat": 43.5649,
+    "lon": 27.8314,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Долна Баня",
+    "lat": 42.3109,
+    "lon": 23.7646,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Долна Митрополия",
+    "lat": 43.4667,
+    "lon": 24.5333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Долни Дъбник",
+    "lat": 43.4,
+    "lon": 24.4333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Долни Чифлик",
+    "lat": 42.993,
+    "lon": 27.716,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Доспат",
+    "lat": 41.6446,
+    "lon": 24.1586,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Драгоман",
+    "lat": 42.9219,
+    "lon": 22.9311,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Дряново",
+    "lat": 42.979,
+    "lon": 25.4785,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Дулово",
+    "lat": 43.8167,
+    "lon": 27.15,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Дупница",
+    "lat": 42.2648,
+    "lon": 23.1172,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Дългопол",
+    "lat": 43.05,
+    "lon": 27.35,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Елена",
+    "lat": 42.9333,
+    "lon": 25.8833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Елин Пелин",
+    "lat": 42.6667,
+    "lon": 23.6,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Елхово",
+    "lat": 42.1667,
+    "lon": 26.5667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Етрополе",
+    "lat": 42.8328,
+    "lon": 23.9964,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Завет",
+    "lat": 43.7604,
+    "lon": 26.6806,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Земен",
+    "lat": 42.4789,
+    "lon": 22.7492,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Златарица",
+    "lat": 43.05,
+    "lon": 25.9,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Златица",
+    "lat": 42.7167,
+    "lon": 24.1333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Златоград",
+    "lat": 41.3795,
+    "lon": 25.0961,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ивайловград",
+    "lat": 41.5267,
+    "lon": 26.1249,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Иваново",
+    "lat": 43.6857,
+    "lon": 25.9556,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Искър",
+    "lat": 43.6708,
+    "lon": 24.4523,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Исперих",
+    "lat": 43.7167,
+    "lon": 26.8333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ихтиман",
+    "lat": 42.4382,
+    "lon": 23.8161,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Каварна",
+    "lat": 43.436,
+    "lon": 28.3395,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Казанлък",
+    "lat": 42.6167,
+    "lon": 25.4,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кайнарджа",
+    "lat": 43.9928,
+    "lon": 27.5071,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Калояново",
+    "lat": 42.35,
+    "lon": 24.7333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Камено",
+    "lat": 42.5708,
+    "lon": 27.2987,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Каолиново",
+    "lat": 43.6167,
+    "lon": 27.1167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Карлово",
+    "lat": 42.6333,
+    "lon": 24.8,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Карнобат",
+    "lat": 42.65,
+    "lon": 26.9833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Каспичан",
+    "lat": 43.3167,
+    "lon": 27.1667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кирково",
+    "lat": 41.3272,
+    "lon": 25.3638,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кнежа",
+    "lat": 43.5,
+    "lon": 24.0833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ковачевци",
+    "lat": 42.5571,
+    "lon": 22.8174,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Козлодуй",
+    "lat": 43.7769,
+    "lon": 23.73,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Копривщица",
+    "lat": 42.6333,
+    "lon": 24.35,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Костенец",
+    "lat": 42.3,
+    "lon": 23.8667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Костинброд",
+    "lat": 42.8167,
+    "lon": 23.2167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Котел",
+    "lat": 42.8833,
+    "lon": 26.45,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кочериново",
+    "lat": 42.0844,
+    "lon": 23.0571,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кресна",
+    "lat": 41.7333,
+    "lon": 23.15,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Криводол",
+    "lat": 43.3744,
+    "lon": 23.4844,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кричим",
+    "lat": 42.05,
+    "lon": 24.4667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Крумовград",
+    "lat": 41.4713,
+    "lon": 25.6548,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Крушари",
+    "lat": 43.8167,
+    "lon": 27.7555,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кубрат",
+    "lat": 43.7966,
+    "lon": 26.5006,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Куклен",
+    "lat": 42.0333,
+    "lon": 24.7833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кула",
+    "lat": 43.8879,
+    "lon": 22.5224,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кърджали",
+    "lat": 41.645,
+    "lon": 25.3658,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Кюстендил",
+    "lat": 42.2831,
+    "lon": 22.6922,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Левски",
+    "lat": 43.3667,
+    "lon": 25.1333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Лесичово",
+    "lat": 42.3563,
+    "lon": 24.1119,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Летница",
+    "lat": 43.3117,
+    "lon": 25.0733,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ловеч",
+    "lat": 43.1323,
+    "lon": 24.7176,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Лозница",
+    "lat": 43.3667,
+    "lon": 26.6,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Лом",
+    "lat": 43.8317,
+    "lon": 23.2379,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Луковит",
+    "lat": 43.2,
+    "lon": 24.1667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Лъки",
+    "lat": 41.85,
+    "lon": 24.8167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Любимец",
+    "lat": 41.8443,
+    "lon": 26.0812,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Лясковец",
+    "lat": 43.1111,
+    "lon": 25.7283,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Мадан",
+    "lat": 41.4987,
+    "lon": 24.9397,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Маджарово",
+    "lat": 41.6346,
+    "lon": 25.8644,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Макреш",
+    "lat": 43.7679,
+    "lon": 22.6641,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Малко Търново",
+    "lat": 41.9796,
+    "lon": 27.5248,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Медковец",
+    "lat": 43.624,
+    "lon": 23.1688,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Мездра",
+    "lat": 43.15,
+    "lon": 23.7,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Мизия",
+    "lat": 43.6862,
+    "lon": 23.8537,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Минерални Бани",
+    "lat": 41.9167,
+    "lon": 25.35,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Мирково",
+    "lat": 42.7,
+    "lon": 23.9833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Момчилград",
+    "lat": 41.5333,
+    "lon": 25.4167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Монтана",
+    "lat": 43.4128,
+    "lon": 23.2217,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Мъглиж",
+    "lat": 42.6,
+    "lon": 25.55,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Невестино",
+    "lat": 42.2546,
+    "lon": 22.849,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Неделино",
+    "lat": 41.456,
+    "lon": 25.0801,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Несебар",
+    "lat": 42.6592,
+    "lon": 27.736,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Никола-Козлево",
+    "lat": 43.5667,
+    "lon": 27.2333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Николаево",
+    "lat": 42.6333,
+    "lon": 25.8,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Никопол",
+    "lat": 43.7053,
+    "lon": 24.8952,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Нова Загора",
+    "lat": 42.4833,
+    "lon": 26.0167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Нови Пазар",
+    "lat": 43.35,
+    "lon": 27.2,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ново Село",
+    "lat": 44.1621,
+    "lon": 22.7838,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Омуртаг",
+    "lat": 43.1,
+    "lon": 26.4167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Опака",
+    "lat": 43.45,
+    "lon": 26.1667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Опан",
+    "lat": 42.2167,
+    "lon": 25.7,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Оряхово",
+    "lat": 43.7381,
+    "lon": 23.9587,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Павел Баня",
+    "lat": 42.6,
+    "lon": 25.2,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Павликени",
+    "lat": 43.2428,
+    "lon": 25.3219,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Пазарджик",
+    "lat": 42.1993,
+    "lon": 24.3332,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Панагюрище",
+    "lat": 42.4952,
+    "lon": 24.1902,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Перник",
+    "lat": 42.5967,
+    "lon": 23.0332,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Перущица",
+    "lat": 42.05,
+    "lon": 24.55,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Петрич",
+    "lat": 41.3985,
+    "lon": 23.207,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Пещера",
+    "lat": 42.0337,
+    "lon": 24.2999,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Пирдоп",
+    "lat": 42.7,
+    "lon": 24.1833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Плевен",
+    "lat": 43.4179,
+    "lon": 24.6167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Пловдив",
+    "lat": 42.1539,
+    "lon": 24.75,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Полски Тръмбеш",
+    "lat": 43.3723,
+    "lon": 25.6352,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Поморие",
+    "lat": 42.5633,
+    "lon": 27.6299,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Попово",
+    "lat": 43.35,
+    "lon": 26.2333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Пордим",
+    "lat": 43.3833,
+    "lon": 24.85,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Правец",
+    "lat": 42.8916,
+    "lon": 23.9153,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Приморско",
+    "lat": 42.2679,
+    "lon": 27.7561,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Провадия",
+    "lat": 43.1833,
+    "lon": 27.4333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Първомай",
+    "lat": 42.1,
+    "lon": 25.2167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Раднево",
+    "lat": 42.3,
+    "lon": 25.9333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Радомир",
+    "lat": 42.5457,
+    "lon": 22.9655,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Разград",
+    "lat": 43.5333,
+    "lon": 26.5185,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Разлог",
+    "lat": 41.8863,
+    "lon": 23.4671,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ракитово",
+    "lat": 41.9901,
+    "lon": 24.0873,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Раковски",
+    "lat": 42.2882,
+    "lon": 24.9678,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Рила",
+    "lat": 42.1262,
+    "lon": 23.1328,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Роман",
+    "lat": 43.15,
+    "lon": 23.9167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Рудозем",
+    "lat": 41.4875,
+    "lon": 24.8495,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Руен",
+    "lat": 42.8,
+    "lon": 27.2833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ружинци",
+    "lat": 43.6218,
+    "lon": 22.8329,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Русе",
+    "lat": 43.8487,
+    "lon": 25.9534,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Садово",
+    "lat": 42.1318,
+    "lon": 24.94,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Самоков",
+    "lat": 42.3385,
+    "lon": 23.5581,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Самуил",
+    "lat": 43.5167,
+    "lon": 26.75,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сандански",
+    "lat": 41.5667,
+    "lon": 23.2833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сапарева Баня",
+    "lat": 42.2892,
+    "lon": 23.2631,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сатовча",
+    "lat": 41.6167,
+    "lon": 23.9833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Свиленград",
+    "lat": 41.7684,
+    "lon": 26.1977,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Свищов",
+    "lat": 43.6187,
+    "lon": 25.3503,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Своге",
+    "lat": 42.9667,
+    "lon": 23.35,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Севлиево",
+    "lat": 43.023,
+    "lon": 25.1036,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Септември",
+    "lat": 42.2202,
+    "lon": 24.1185,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Силистра",
+    "lat": 44.1171,
+    "lon": 27.2606,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Симеоновград",
+    "lat": 42.0333,
+    "lon": 25.8333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Симитли",
+    "lat": 41.8833,
+    "lon": 23.1167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ситово",
+    "lat": 44.0273,
+    "lon": 27.0198,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сливен",
+    "lat": 42.6861,
+    "lon": 26.3256,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сливница",
+    "lat": 42.8518,
+    "lon": 23.0379,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сливо Поле",
+    "lat": 43.9425,
+    "lon": 26.2046,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Смолян",
+    "lat": 41.5744,
+    "lon": 24.712,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Смядово",
+    "lat": 43.0667,
+    "lon": 27.0167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Созопол",
+    "lat": 42.418,
+    "lon": 27.6956,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сопот",
+    "lat": 43.0259,
+    "lon": 24.4229,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "София",
+    "lat": 42.6975,
+    "lon": 23.3241,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Средец",
+    "lat": 42.3475,
+    "lon": 27.179,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стамболийски",
+    "lat": 42.1333,
+    "lon": 24.5333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стамболово",
+    "lat": 41.7667,
+    "lon": 25.65,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стара Загора",
+    "lat": 42.432,
+    "lon": 25.6426,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стражица",
+    "lat": 43.2333,
+    "lon": 25.9667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стралджа",
+    "lat": 42.6,
+    "lon": 26.6833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Стрелча",
+    "lat": 42.5,
+    "lon": 24.3167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Струмяни",
+    "lat": 41.6333,
+    "lon": 23.2,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Суворово",
+    "lat": 43.3306,
+    "lon": 27.5991,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сунгурларе",
+    "lat": 42.7667,
+    "lon": 26.7833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сухиндол",
+    "lat": 43.1917,
+    "lon": 25.1811,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Съединение",
+    "lat": 42.2667,
+    "lon": 24.55,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Сърница",
+    "lat": 41.7383,
+    "lon": 24.0243,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Твърдица",
+    "lat": 42.7,
+    "lon": 25.9,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Тервел",
+    "lat": 43.7479,
+    "lon": 27.4091,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Тетевен",
+    "lat": 42.9167,
+    "lon": 24.2667,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Тополовград",
+    "lat": 42.0833,
+    "lon": 26.3333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Трекляно",
+    "lat": 42.5511,
+    "lon": 22.5969,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Троян",
+    "lat": 42.8943,
+    "lon": 24.7159,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Трън",
+    "lat": 42.8353,
+    "lon": 22.6517,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Трявна",
+    "lat": 42.8667,
+    "lon": 25.5,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Тутракан",
+    "lat": 44.0491,
+    "lon": 26.6121,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Търговище",
+    "lat": 43.2512,
+    "lon": 26.5722,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Угърчин",
+    "lat": 43.1,
+    "lon": 24.4167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Хаджидимово",
+    "lat": 41.5222,
+    "lon": 23.8686,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Хайредин",
+    "lat": 43.6019,
+    "lon": 23.6613,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Харманли",
+    "lat": 41.9323,
+    "lon": 25.9017,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Хасково",
+    "lat": 41.9342,
+    "lon": 25.5556,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Хисаря",
+    "lat": 42.5,
+    "lon": 24.7,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Хитрино",
+    "lat": 43.4333,
+    "lon": 26.9167,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Цар Калоян",
+    "lat": 43.6167,
+    "lon": 26.25,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Царево",
+    "lat": 42.1696,
+    "lon": 27.8454,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ценово",
+    "lat": 43.5359,
+    "lon": 25.6576,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Чавдар",
+    "lat": 42.65,
+    "lon": 24.05,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Челопеч",
+    "lat": 42.7,
+    "lon": 24.0833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Чепеларе",
+    "lat": 41.7333,
+    "lon": 24.6833,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Червен бряг",
+    "lat": 43.2788,
+    "lon": 24.0825,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Черноочене",
+    "lat": 41.7667,
+    "lon": 25.35,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Чипровци",
+    "lat": 43.3842,
+    "lon": 22.8808,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Чирпан",
+    "lat": 42.2,
+    "lon": 25.3333,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Чупрене",
+    "lat": 43.5181,
+    "lon": 22.6661,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Шабла",
+    "lat": 43.5398,
+    "lon": 28.5343,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Шумен",
+    "lat": 43.2706,
+    "lon": 26.9229,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ябланица",
+    "lat": 43.0281,
+    "lon": 24.1024,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Якимово",
+    "lat": 43.6347,
+    "lon": 23.3535,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Якоруда",
+    "lat": 42.0253,
+    "lon": 23.6842,
+    "timezone": "Europe/Sofia"
+  },
+  {
+    "name": "Ямбол",
+    "lat": 42.4824,
+    "lon": 26.5001,
+    "timezone": "Europe/Sofia"
+  }
+]
