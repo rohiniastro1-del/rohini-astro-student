@@ -38,8 +38,8 @@ latest_calculator_view: dict[str, object] | None = None
 OFFICIAL_SITE_URL = "https://rohiniastrobg.com/"
 CONSULTATION_URL = "https://rohiniastrobg.com/astrologichni-uslugi/"
 TRAINING_URL = "https://rohiniastrobg.com/obucheniya-astro-i-i-czin/"
-SOURCE_CODE_URL = "https://github.com/rohiniastro1-del/jyotish-calculator"
-LICENSE_URL = "https://github.com/rohiniastro1-del/jyotish-calculator/blob/main/LICENSE"
+SOURCE_CODE_URL = "https://github.com/rohiniastro1-del/rohini-astro-student"
+LICENSE_URL = "https://github.com/rohiniastro1-del/rohini-astro-student/blob/main/LICENSE"
 
 
 def apply_global_node_mode(form_values: dict[str, str]) -> None:
