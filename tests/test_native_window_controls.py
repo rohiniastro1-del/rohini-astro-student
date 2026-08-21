@@ -56,6 +56,7 @@ class NativeWindowControlTests(unittest.TestCase):
         self.assertIn("frameless=False", source)
         self.assertIn("private_mode=False", source)
         self.assertIn("storage_path=str(WEBVIEW_STORAGE)", source)
+        self.assertIn('webview.settings["ALLOW_DOWNLOADS"] = True', source)
         self.assertNotIn('data-window-action="minimize"', template)
         self.assertNotIn('data-window-action="maximize"', template)
         self.assertNotIn('data-window-action="close"', template)
