@@ -66,35 +66,16 @@ body * {
   align-items: center;
   gap: 3px;
 }
-.desktop-menubar__badge {
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  width: 28px;
-  height: 28px;
-  border-radius: 8px;
-  background:
-    radial-gradient(circle at 30% 22%, rgba(255, 221, 140, 0.18), transparent 58%),
-    linear-gradient(160deg, #33463a 0%, #182720 55%, #0f1a15 100%);
-  border: 1px solid rgba(201, 169, 96, 0.55);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 240, 190, 0.22),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-    0 1px 3px rgba(18, 28, 21, 0.35);
+.desktop-menubar__tabs {
+  gap: 4px;
 }
-.desktop-menubar__badge img {
-  display: block;
-  width: 26px;
-  height: auto;
-  filter:
-    brightness(0)
-    invert(1)
-    sepia(1)
-    saturate(7)
-    hue-rotate(0deg)
-    brightness(0.9)
-    contrast(1.05)
-    drop-shadow(0 1px 1px rgba(0, 0, 0, 0.45));
+.desktop-menubar__time-controls {
+  flex: 0 0 auto;
+}
+.desktop-menubar__drag-region {
+  flex: 1 1 auto;
+  min-width: 8px;
+  align-self: stretch;
 }
 .desktop-menu-tab,
 .desktop-time-step,
@@ -108,7 +89,14 @@ body * {
   box-shadow: none;
 }
 .desktop-menu-tab {
-  padding: 4px 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  height: 28px;
+  margin: 0;
+  padding: 4px 14px;
+  white-space: nowrap;
 }
 .desktop-menu-tab:hover,
 .desktop-menu-tab.is-active {
@@ -146,6 +134,10 @@ body * {
   background: #eef3e9;
 }
 .desktop-menubar__time-controls select {
+  flex: 0 0 190px;
+  width: 190px;
+  max-width: 190px;
+  height: 28px;
   min-width: 84px;
   padding: 3px 8px;
   border-color: #aeb7ad;
@@ -155,7 +147,9 @@ body * {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   border-color: #aeb7ad;
   background: #fafaf7;
@@ -836,6 +830,17 @@ body * {
 .has-desktop-workspace.is-data-panel-open .coordinate-block {
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 76px;
   gap: 5px;
+}
+.has-desktop-workspace.is-data-panel-open .coordinate-block .field > span {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 .has-desktop-workspace.is-data-panel-open .desktop-global-chart-style button,
 .has-desktop-workspace.is-data-panel-open .form-actions button {

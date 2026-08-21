@@ -2735,29 +2735,41 @@ function bindWindowControls() {
     return window.pywebview.api;
   };
 
-  const refreshMaximizeIcon = () => {
+  const refreshMaximizeIcon = (isMaximized = Boolean(document.fullscreenElement)) => {
     if (!maximizeButton) return;
-    const isFullscreen = Boolean(document.fullscreenElement);
-    maximizeButton.textContent = isFullscreen ? "\uE923" : "\uE922";
-    maximizeButton.title = isFullscreen ? "Възстановяване" : "Увеличаване";
+    maximizeButton.textContent = isMaximized ? "\uE923" : "\uE922";
+    maximizeButton.title = isMaximized ? "Възстановяване" : "Увеличаване";
     maximizeButton.setAttribute("aria-label", maximizeButton.title);
   };
 
-  minimizeButton?.addEventListener("click", () => {
-    const api = nativeApi();
-    if (api && typeof api.minimize === "function") {
-      api.minimize();
-      return;
+  const invokeWindowAction = async (action) => {
+    try {
+      const response = await fetch(`/__rohini_window/${action}`, { method: "POST" });
+      if (response.ok) return await response.json();
+    } catch (_error) {
+      // The browser development mode has no native-window endpoint.
     }
+
+    const api = nativeApi();
+    const method = action === "maximize" ? "toggle_maximize" : action;
+    if (api && typeof api[method] === "function") {
+      const maximized = await api[method]();
+      return { ok: true, maximized: Boolean(maximized) };
+    }
+    return null;
+  };
+
+  minimizeButton?.addEventListener("click", async () => {
+    if (await invokeWindowAction("minimize")) return;
     if (document.fullscreenElement) {
       document.exitFullscreen().catch(() => {});
     }
   });
 
-  maximizeButton?.addEventListener("click", () => {
-    const api = nativeApi();
-    if (api && typeof api.toggle_maximize === "function") {
-      api.toggle_maximize();
+  maximizeButton?.addEventListener("click", async () => {
+    const result = await invokeWindowAction("maximize");
+    if (result) {
+      refreshMaximizeIcon(Boolean(result.maximized));
       return;
     }
     if (document.fullscreenElement) {
@@ -2767,17 +2779,15 @@ function bindWindowControls() {
     }
   });
 
-  closeButton?.addEventListener("click", () => {
-    const api = nativeApi();
-    if (api && typeof api.close === "function") {
-      api.close();
-      return;
-    }
+  closeButton?.addEventListener("click", async () => {
+    if (await invokeWindowAction("close")) return;
     window.close();
   });
 
-  document.addEventListener("fullscreenchange", refreshMaximizeIcon);
-  refreshMaximizeIcon();
+  document.addEventListener("fullscreenchange", () => refreshMaximizeIcon());
+  invokeWindowAction("state").then((result) => {
+    refreshMaximizeIcon(result ? Boolean(result.maximized) : false);
+  });
 }
 
 function bindTransitRowSizing() {
@@ -2858,6 +2868,5 @@ function initGlobalNodeMode() {
     } catch (_error) { /* текуща сесия */ }
   });
 }
-
 
 
