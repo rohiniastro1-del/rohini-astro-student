@@ -132,6 +132,7 @@ def main() -> None:
         return
 
     set_windows_app_identity()
+    webview.settings["ALLOW_DOWNLOADS"] = True
 
     server = make_server("127.0.0.1", 0, app, threaded=True)
     port = server.server_port
