@@ -347,10 +347,67 @@ def index() -> str:
 
 
 APP_ROOT = Path(__file__).resolve().parent
-HOROSCOPES_DIR = APP_ROOT / "Хороскопи"
+PROGRAM_ROOT = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else APP_ROOT
+
+
+def get_student_documents_dir() -> Path:
+    if sys.platform == "win32":
+        try:
+            import winreg
+
+            with winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER, r"Software\Rohini Astro Student"
+            ) as key:
+                configured_path, _ = winreg.QueryValueEx(key, "StudentDataRoot")
+            if configured_path:
+                return Path(os.path.expandvars(configured_path))
+        except (OSError, ValueError):
+            pass
+        try:
+            import winreg
+
+            key_path = r"Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders"
+            with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path) as key:
+                documents_path, _ = winreg.QueryValueEx(key, "Personal")
+            return Path(os.path.expandvars(documents_path)) / "Rohini Astro Student"
+        except (OSError, ValueError):
+            pass
+    return Path.home() / "Documents" / "Rohini Astro Student"
+
+
+def prepare_student_data_root(preferred_root: Path, fallback_root: Path) -> Path:
+    """Return the first usable student-data folder without crashing at startup."""
+    errors: list[OSError] = []
+    for root in dict.fromkeys((preferred_root, fallback_root)):
+        try:
+            (root / "Хороскопи").mkdir(parents=True, exist_ok=True)
+            return root
+        except OSError as exc:
+            errors.append(exc)
+    if errors:
+        raise errors[-1]
+    raise OSError("Не може да бъде определена папка за данните на програмата.")
+
+
+if getattr(sys, "frozen", False):
+    local_app_data = Path(
+        os.environ.get("LOCALAPPDATA", Path.home() / "AppData" / "Local")
+    )
+    USER_DATA_ROOT = prepare_student_data_root(
+        get_student_documents_dir(),
+        local_app_data / "Rohini Astro Student" / "User Data",
+    )
+    state_root = local_app_data / "Rohini Astro Student"
+    DIALOG_HELPER = PROGRAM_ROOT / "RohiniFileDialog.exe"
+else:
+    USER_DATA_ROOT = APP_ROOT
+    state_root = APP_ROOT
+    DIALOG_HELPER = APP_ROOT / "filedialog_helper.py"
+
+HOROSCOPES_DIR = USER_DATA_ROOT / "Хороскопи"
 HOROSCOPES_DIR.mkdir(parents=True, exist_ok=True)
-LAST_FOLDER_STATE_PATH = APP_ROOT / ".rohini-horoscopes-last-folder.txt"
-DIALOG_HELPER = APP_ROOT / "filedialog_helper.py"
+state_root.mkdir(parents=True, exist_ok=True)
+LAST_FOLDER_STATE_PATH = state_root / ".rohini-horoscopes-last-folder.txt"
 
 
 def get_last_horoscope_folder() -> str:
@@ -371,12 +428,16 @@ def remember_horoscope_folder(path: str) -> None:
 
 
 def run_native_file_dialog(mode: str, initial_dir: str, filename: str = "") -> str | None:
-    helper_python = Path(sys.executable).with_name("python.exe")
-    if not helper_python.exists():
-        helper_python = Path(sys.executable)
+    if getattr(sys, "frozen", False):
+        command = [str(DIALOG_HELPER), mode, initial_dir, filename]
+    else:
+        helper_python = Path(sys.executable).with_name("python.exe")
+        if not helper_python.exists():
+            helper_python = Path(sys.executable)
+        command = [str(helper_python), str(DIALOG_HELPER), mode, initial_dir, filename]
     try:
         result = subprocess.run(
-            [str(helper_python), str(DIALOG_HELPER), mode, initial_dir, filename],
+            command,
             capture_output=True,
             text=True,
             encoding="utf-8",
