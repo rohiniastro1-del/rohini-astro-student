@@ -9,14 +9,12 @@
   <body class="{% if results %}has-desktop-workspace{% endif %}{% if form_values.showOuterPlanets == 'on' %} show-desktop-outer-planets{% endif %}">
     <nav class="desktop-menubar" aria-label="Основно меню">
       <div class="desktop-menubar__tabs">
-        <span class="desktop-menubar__badge" aria-hidden="true">
-          <img src="{{ url_for('static', filename='brand/rohini-astro-logo.png', v=static_token) }}" alt="">
-        </span>
         <button type="button" class="desktop-menu-tab is-active" data-desktop-view="chakra">Рохини Чакра</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="data">Данни</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="transits">Транзити</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="about">За програмата</button>
       </div>
+      <div class="desktop-menubar__drag-region" aria-hidden="true"></div>
       <div class="desktop-menubar__time-controls">
         <select id="desktopTimeUnit" aria-label="Единица за движение във времето">
           <option value="second">Секунда</option>
@@ -30,11 +28,6 @@
         <button type="button" class="desktop-time-step" data-desktop-time-direction="forward" aria-label="Напред">▲</button>
         <button type="button" class="desktop-time-step" data-desktop-time-direction="backward" aria-label="Назад">▼</button>
         <label class="desktop-gochar-toggle"><input type="checkbox" id="desktopGocharToggle" {% if build_mode == 'transit' %}checked{% endif %}> <span>Транзит</span></label>
-        <div class="desktop-window-controls" aria-label="Управление на прозореца">
-          <button type="button" class="desktop-window-control" data-window-action="minimize" title="Минимизиране" aria-label="Минимизиране">&#xE921;</button>
-          <button type="button" class="desktop-window-control" data-window-action="maximize" title="Увеличаване" aria-label="Увеличаване">&#xE922;</button>
-          <button type="button" class="desktop-window-control desktop-window-control--close" data-window-action="close" title="Затваряне" aria-label="Затваряне">&#xE8BB;</button>
-        </div>
       </div>
     </nav>
     <div class="page-shell">
@@ -303,7 +296,7 @@
                   <div class="compact-settings__body">
                 <div class="coordinate-columns">
                   <div class="coordinate-panel">
-                    <p class="coordinate-panel__title">Транзитна ширина</p>
+                    <p class="coordinate-panel__title">Ширина</p>
                     <div class="coordinate-block">
                       <label class="field">
                         <span>Градуси</span>
@@ -323,7 +316,7 @@
                     </div>
                   </div>
                   <div class="coordinate-panel">
-                    <p class="coordinate-panel__title">Транзитна дължина</p>
+                    <p class="coordinate-panel__title">Дължина</p>
                     <div class="coordinate-block">
                       <label class="field">
                         <span>Градуси</span>
