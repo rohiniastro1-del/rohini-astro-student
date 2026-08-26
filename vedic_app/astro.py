@@ -64,9 +64,11 @@ FIELD_NAMES = {
         "city": "cityName",
         "latitude_degrees": "latitudeDegrees",
         "latitude_minutes": "latitudeMinutes",
+        "latitude_seconds": "latitudeSeconds",
         "latitude_hemisphere": "latitudeHemisphere",
         "longitude_degrees": "longitudeDegrees",
         "longitude_minutes": "longitudeMinutes",
+        "longitude_seconds": "longitudeSeconds",
         "longitude_hemisphere": "longitudeHemisphere",
         "timezone_mode": "timezoneMode",
         "manual_tz_sign": "manualTzSign",
@@ -80,9 +82,11 @@ FIELD_NAMES = {
         "city": "transitCityName",
         "latitude_degrees": "transitLatitudeDegrees",
         "latitude_minutes": "transitLatitudeMinutes",
+        "latitude_seconds": "transitLatitudeSeconds",
         "latitude_hemisphere": "transitLatitudeHemisphere",
         "longitude_degrees": "transitLongitudeDegrees",
         "longitude_minutes": "transitLongitudeMinutes",
+        "longitude_seconds": "transitLongitudeSeconds",
         "longitude_hemisphere": "transitLongitudeHemisphere",
         "timezone_mode": "transitTimezoneMode",
         "manual_tz_sign": "transitManualTzSign",
@@ -467,8 +471,8 @@ def _default_chart_form_values(
     time_value: str = "",
 ) -> dict[str, str]:
     city = CITY_LOOKUP[city_name]
-    lat_deg, lat_min = decimal_to_degree_minutes(city["lat"])
-    lon_deg, lon_min = decimal_to_degree_minutes(city["lon"])
+    lat_deg, lat_min, lat_sec = decimal_to_dms(city["lat"])
+    lon_deg, lon_min, lon_sec = decimal_to_dms(city["lon"])
     names = FIELD_NAMES[prefix]
     return {
         names["date"]: date_value,
@@ -476,9 +480,11 @@ def _default_chart_form_values(
         names["city"]: city_name,
         names["latitude_degrees"]: str(lat_deg),
         names["latitude_minutes"]: str(lat_min),
+        names["latitude_seconds"]: str(lat_sec),
         names["latitude_hemisphere"]: "N",
         names["longitude_degrees"]: str(lon_deg),
         names["longitude_minutes"]: str(lon_min),
+        names["longitude_seconds"]: str(lon_sec),
         names["longitude_hemisphere"]: "E",
         names["timezone_mode"]: "auto",
         names["manual_tz_sign"]: "+",
@@ -498,14 +504,21 @@ def decimal_to_degree_minutes(value: float) -> tuple[int, int]:
     return degrees, minutes
 
 
+def decimal_to_dms(value: float) -> tuple[int, int, int]:
+    total_seconds = int(round(abs(value) * 3600))
+    degrees, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return degrees, minutes, seconds
+
+
 def _format_coordinate_label(latitude: float, longitude: float) -> str:
-    lat_deg, lat_min = decimal_to_degree_minutes(latitude)
-    lon_deg, lon_min = decimal_to_degree_minutes(longitude)
+    lat_deg, lat_min, lat_sec = decimal_to_dms(latitude)
+    lon_deg, lon_min, lon_sec = decimal_to_dms(longitude)
     lat_hemi = "N" if latitude >= 0 else "S"
     lon_hemi = "E" if longitude >= 0 else "W"
     return (
-        f"{lat_deg:02d}° {lat_min:02d}' {lat_hemi}, "
-        f"{lon_deg:02d}° {lon_min:02d}' {lon_hemi} "
+        f"{lat_deg:02d}° {lat_min:02d}' {lat_sec:02d}\" {lat_hemi}, "
+        f"{lon_deg:02d}° {lon_min:02d}' {lon_sec:02d}\" {lon_hemi} "
         f"({latitude:.4f}°, {longitude:.4f}°)"
     )
 
@@ -589,22 +602,31 @@ def _navamsha_sign(sign_index: int, degree_in_sign: float) -> int:
     return navamsha_sign_index(sign_index, degree_in_sign)
 
 
-def _dms_to_decimal(degrees_text: str, minutes_text: str, hemisphere: str, axis: str) -> float:
+def _dms_to_decimal(
+    degrees_text: str,
+    minutes_text: str,
+    seconds_text: str,
+    hemisphere: str,
+    axis: str,
+) -> float:
     try:
         degrees = int(degrees_text)
         minutes = int(minutes_text)
+        seconds = int(seconds_text or "0")
     except ValueError as exc:
-        raise CalculationError("Координатите трябва да са цели числа в градуси и минути.") from exc
+        raise CalculationError("Координатите трябва да са цели числа в градуси, минути и секунди.") from exc
 
     if minutes < 0 or minutes >= 60:
         raise CalculationError("Минутите в координатите трябва да са между 0 и 59.")
+    if seconds < 0 or seconds >= 60:
+        raise CalculationError("Секундите в координатите трябва да са между 0 и 59.")
 
     limit = 90 if axis == "lat" else 180
     if degrees < 0 or degrees > limit:
         axis_label = "ширина" if axis == "lat" else "дължина"
         raise CalculationError(f"Градусите по {axis_label} трябва да са между 0 и {limit}.")
 
-    value = degrees + (minutes / 60)
+    value = degrees + (minutes / 60) + (seconds / 3600)
     if hemisphere in {"S", "W"}:
         value *= -1
     return value
@@ -746,12 +768,14 @@ def calculate_lagna_sign(form_data: dict[str, str], chart_code: str = "D1", pref
     latitude = _dms_to_decimal(
         _get_form_value(form_data, prefix, "latitude_degrees"),
         _get_form_value(form_data, prefix, "latitude_minutes"),
+        _get_form_value(form_data, prefix, "latitude_seconds") or "0",
         _get_form_value(form_data, prefix, "latitude_hemisphere") or "N",
         "lat",
     )
     longitude = _dms_to_decimal(
         _get_form_value(form_data, prefix, "longitude_degrees"),
         _get_form_value(form_data, prefix, "longitude_minutes"),
+        _get_form_value(form_data, prefix, "longitude_seconds") or "0",
         _get_form_value(form_data, prefix, "longitude_hemisphere") or "E",
         "lon",
     )
@@ -873,12 +897,14 @@ def _calculate_chart(
     latitude = _dms_to_decimal(
         _get_form_value(form_data, prefix, "latitude_degrees"),
         _get_form_value(form_data, prefix, "latitude_minutes"),
+        _get_form_value(form_data, prefix, "latitude_seconds") or "0",
         _get_form_value(form_data, prefix, "latitude_hemisphere") or "N",
         "lat",
     )
     longitude = _dms_to_decimal(
         _get_form_value(form_data, prefix, "longitude_degrees"),
         _get_form_value(form_data, prefix, "longitude_minutes"),
+        _get_form_value(form_data, prefix, "longitude_seconds") or "0",
         _get_form_value(form_data, prefix, "longitude_hemisphere") or "E",
         "lon",
     )
@@ -1303,4 +1329,3 @@ def _utc_datetime_from_jd(jd_ut: float) -> datetime:
         microsecond = 0
     base = datetime(year, month, day, tzinfo=timezone.utc)
     return base + timedelta(hours=hour, minutes=minute, seconds=second, microseconds=microsecond)
-
