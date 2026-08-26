@@ -1,4 +1,5 @@
 import sys
+import re
 import unittest
 from datetime import datetime, timezone
 from pathlib import Path
@@ -100,6 +101,21 @@ class EclipseMarkerTests(unittest.TestCase):
             state_block = styles.split(selector, 1)[1].split("}", 1)[0]
             for geometry_prop in ("min-width", "height", "border-radius", "padding", "width"):
                 self.assertNotIn(geometry_prop, state_block, f"{state} redefines {geometry_prop}")
+
+    def test_luminary_labels_stay_bright_red_for_the_full_eclipse_window(self) -> None:
+        styles = (WORKSPACE / "static" / "styles.css").read_text(encoding="utf-8")
+        base_marker = ".desktop-graha-cell.is-eclipse > strong"
+        base_block = styles.split(base_marker, 1)[1].split("}", 1)[0]
+        self.assertIn("color: #ff1738", base_block)
+        self.assertIn("text-shadow:", base_block)
+
+        for state in ("window", "near", "day"):
+            selector = f".desktop-graha-cell.is-eclipse-{state} > strong"
+            state_block = styles.split(selector, 1)[1].split("}", 1)[0]
+            self.assertIsNone(
+                re.search(r"(?:^|\n)\s*color\s*:", state_block),
+                f"{state} overrides the red label",
+            )
 
 
 if __name__ == "__main__":
