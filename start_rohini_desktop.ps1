@@ -85,6 +85,23 @@ function Show-StartError([string]$message) {
     }
 }
 
+function Get-Sha256([string]$path) {
+    $stream = [System.IO.File]::OpenRead($path)
+    try {
+        $sha256 = [System.Security.Cryptography.SHA256]::Create()
+        try {
+            $hashBytes = $sha256.ComputeHash($stream)
+            return ([System.BitConverter]::ToString($hashBytes)).Replace("-", "")
+        }
+        finally {
+            $sha256.Dispose()
+        }
+    }
+    finally {
+        $stream.Dispose()
+    }
+}
+
 try {
     if (-not (Test-Path -LiteralPath $runtimePython -PathType Leaf)) {
         $pythonCommand = Get-Command python.exe -ErrorAction SilentlyContinue
@@ -97,7 +114,7 @@ try {
         }
     }
 
-    $requirementsHash = (Get-FileHash -LiteralPath $requirementsPath -Algorithm SHA256).Hash
+    $requirementsHash = Get-Sha256 $requirementsPath
     $savedHash = if (Test-Path -LiteralPath $readyMarker) { (Get-Content -LiteralPath $readyMarker -Raw).Trim() } else { "" }
     if ($savedHash -ne $requirementsHash) {
         & $runtimePython -m pip install --disable-pip-version-check --requirement $requirementsPath

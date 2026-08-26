@@ -27,25 +27,33 @@ def main() -> None:
     initial_file = sys.argv[3] if len(sys.argv) > 3 else ""
 
     root = tk.Tk()
-    root.withdraw()
-    root.attributes("-topmost", True)
-    root.update()
+    try:
+        # Диалогът трябва да има собственик. Без parent Windows понякога го
+        # отваря зад основния прозорец и програмата изглежда блокирала.
+        root.withdraw()
+        root.attributes("-topmost", True)
+        root.update_idletasks()
+        root.lift()
+        root.focus_force()
 
-    if mode == "save":
-        path = filedialog.asksaveasfilename(
-            initialdir=initial_dir or None,
-            initialfile=initial_file,
-            defaultextension=".jhd",
-            filetypes=FILE_TYPES,
-            title="Запази хороскоп",
-        )
-    else:
-        path = filedialog.askopenfilename(
-            initialdir=initial_dir or None,
-            filetypes=FILE_TYPES,
-            title="Отвори хороскоп",
-        )
-    root.destroy()
+        if mode == "save":
+            path = filedialog.asksaveasfilename(
+                parent=root,
+                initialdir=initial_dir or None,
+                initialfile=initial_file,
+                defaultextension=".jhd",
+                filetypes=FILE_TYPES,
+                title="Запази хороскоп",
+            )
+        else:
+            path = filedialog.askopenfilename(
+                parent=root,
+                initialdir=initial_dir or None,
+                filetypes=FILE_TYPES,
+                title="Отвори хороскоп",
+            )
+    finally:
+        root.destroy()
     print(path or "")
 
 

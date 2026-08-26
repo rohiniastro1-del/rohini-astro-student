@@ -3,9 +3,11 @@ from __future__ import annotations
 import json
 import os
 import re
+import secrets
 import subprocess
 
 import sys
+import threading
 import time
 from copy import deepcopy
 from datetime import datetime, timedelta
@@ -14,6 +16,8 @@ from pathlib import Path
 PACKAGE_DIR = Path(__file__).resolve().parent / ".packages"
 if PACKAGE_DIR.exists():
     sys.path.insert(0, str(PACKAGE_DIR))
+
+from datetime import datetime, timedelta
 
 from flask import Flask, jsonify, render_template, request
 
@@ -40,11 +44,20 @@ CONSULTATION_URL = "https://rohiniastrobg.com/astrologichni-uslugi/"
 TRAINING_URL = "https://rohiniastrobg.com/obucheniya-astro-i-i-czin/"
 SOURCE_CODE_URL = "https://github.com/rohiniastro1-del/rohini-astro-student"
 LICENSE_URL = "https://github.com/rohiniastro1-del/rohini-astro-student/blob/main/LICENSE"
+APP_SESSION_ID = secrets.token_hex(16)
 
 
-def apply_global_node_mode(form_values: dict[str, str]) -> None:
-    """Прилага глобалния режим на възлите (Rahu/Ketu) от cookie-то."""
+def apply_global_node_mode(
+    form_values: dict[str, str], persistent_settings: dict[str, str] | None = None
+) -> None:
+    """Прилага постоянния режим на възлите (Rahu/Ketu)."""
+    settings = persistent_settings if persistent_settings is not None else load_user_settings()
+    # Първо приемаме старото cookie, за да мигрираме без промяна избора
+    # на потребителите от предишните версии. Новият интерфейс записва едновременно
+    # cookie и постоянния файл, затова след миграцията те остават синхронизирани.
     saved_node_mode = request.cookies.get("rohini_node_mode", "")
+    if saved_node_mode not in ("mean", "true"):
+        saved_node_mode = settings.get("node_mode", "")
     if saved_node_mode in ("mean", "true"):
         form_values["nodeMode"] = saved_node_mode
         form_values["transitNodeMode"] = saved_node_mode
@@ -146,19 +159,23 @@ def chart_context_lagna_boundaries() -> object:
     try:
         current_sign = calculate_lagna_sign(form_data, chart_code, prefix)
 
-        def sign_at_offset(offset_seconds: int) -> int:
-            shifted_date, shifted_time = shift_civil_datetime(
-                form_data[date_key], form_data[time_key], abs(offset_seconds), "second",
-                forward=offset_seconds >= 0,
-            )
+        base_datetime = datetime.fromisoformat(f"{form_data[date_key]}T{form_data[time_key]}")
+
+        def fields_at_offset(offset_seconds: float) -> tuple[str, str]:
+            shifted = base_datetime + timedelta(seconds=offset_seconds)
+            time_text = shifted.isoformat(timespec="microseconds").split("T", 1)[1]
+            return shifted.date().isoformat(), time_text
+
+        def sign_at_offset(offset_seconds: float) -> int:
+            shifted_date, shifted_time = fields_at_offset(offset_seconds)
             moved = dict(form_data)
             moved[date_key] = shifted_date
             moved[time_key] = shifted_time
             return calculate_lagna_sign(moved, chart_code, prefix)
 
-        def find_boundary(direction: int) -> int:
-            low = 0
-            high = 60
+        def find_boundary(direction: int) -> float:
+            low = 0.0
+            high = 60.0
             maximum = 7 * 24 * 60 * 60
             while high < maximum and sign_at_offset(direction * high) == current_sign:
                 low = high
@@ -166,8 +183,12 @@ def chart_context_lagna_boundaries() -> object:
             high = min(high, maximum)
             if sign_at_offset(direction * high) == current_sign:
                 raise CalculationError("Не е намерена смяна на лагна в следващите седем дни.")
-            while high - low > 1:
-                middle = (low + high) // 2
+            # One tenth of a millisecond is well below the precision needed
+            # for a displayed arcsecond, while remaining stable in Swiss
+            # Ephemeris calculations.  ``high`` always stays on the new side
+            # of the boundary.
+            while high - low > 0.0001:
+                middle = (low + high) / 2.0
                 if sign_at_offset(direction * middle) == current_sign:
                     low = middle
                 else:
@@ -176,7 +197,9 @@ def chart_context_lagna_boundaries() -> object:
 
         backward_seconds = find_boundary(-1)
         forward_seconds = find_boundary(1)
-    except (CalculationError, TimeDynamicsError) as exc:
+        backward_date, backward_time = fields_at_offset(-backward_seconds)
+        forward_date, forward_time = fields_at_offset(forward_seconds)
+    except (CalculationError, TimeDynamicsError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
 
     return jsonify({
@@ -185,6 +208,8 @@ def chart_context_lagna_boundaries() -> object:
         "sign_name": SIGN_NAMES_BG[current_sign - 1],
         "backward_seconds": backward_seconds,
         "forward_seconds": forward_seconds,
+        "backward": {"date": backward_date, "time": backward_time},
+        "forward": {"date": forward_date, "time": forward_time},
     })
 
 
@@ -281,8 +306,13 @@ def dasha_periods() -> object:
 def index() -> str:
     global latest_calculator_view
     form_values = default_form_values()
+    persistent_settings = load_user_settings()
     if request.method == "GET":
+        # Старото cookie е източникът за еднократната миграция от предишните
+        # версии; след това интерфейсът го синхронизира с постоянния файл.
         saved_combustion_orb = request.cookies.get("rohini_combustion_orb", "")
+        if not saved_combustion_orb:
+            saved_combustion_orb = persistent_settings.get("combustion_orb", "")
         try:
             saved_orb_number = float(saved_combustion_orb.replace(",", "."))
             # Older desktop builds could persist 0 here after a browser-side
@@ -293,7 +323,7 @@ def index() -> str:
                 form_values["combustionOrbDegrees"] = f"{saved_orb_number:g}"
         except (TypeError, ValueError):
             pass
-        apply_global_node_mode(form_values)
+        apply_global_node_mode(form_values, persistent_settings)
     results = None
     error = None
     build_mode = "natal"
@@ -337,6 +367,8 @@ def index() -> str:
             build_chart_export_data(results) if results else {"title": "", "charts": [], "degree_rows": []},
             ensure_ascii=False,
         ),
+        persistent_chart_style=persistent_settings.get("chart_style", ""),
+        app_session_id=APP_SESSION_ID,
         static_token=int(time.time()),
         OFFICIAL_SITE_URL=OFFICIAL_SITE_URL,
         CONSULTATION_URL=CONSULTATION_URL,
@@ -408,6 +440,76 @@ HOROSCOPES_DIR = USER_DATA_ROOT / "Хороскопи"
 HOROSCOPES_DIR.mkdir(parents=True, exist_ok=True)
 state_root.mkdir(parents=True, exist_ok=True)
 LAST_FOLDER_STATE_PATH = state_root / ".rohini-horoscopes-last-folder.txt"
+USER_SETTINGS_PATH = state_root / ".rohini-user-settings.json"
+USER_SETTINGS_LOCK = threading.Lock()
+
+
+def load_user_settings() -> dict[str, str]:
+    try:
+        payload = json.loads(USER_SETTINGS_PATH.read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError, json.JSONDecodeError):
+        return {}
+    if not isinstance(payload, dict):
+        return {}
+
+    settings: dict[str, str] = {}
+    if payload.get("chart_style") in ("north", "south"):
+        settings["chart_style"] = str(payload["chart_style"])
+    if payload.get("node_mode") in ("mean", "true"):
+        settings["node_mode"] = str(payload["node_mode"])
+    try:
+        orb = float(str(payload.get("combustion_orb", "")).replace(",", "."))
+        if 0.0 < orb <= 30.0:
+            settings["combustion_orb"] = f"{orb:g}"
+    except (TypeError, ValueError):
+        pass
+    return settings
+
+
+def save_user_settings(changes: dict[str, object]) -> dict[str, str]:
+    validated: dict[str, str] = {}
+    if "chart_style" in changes:
+        style = str(changes["chart_style"])
+        if style not in ("north", "south"):
+            raise ValueError("Невалиден стил на картите.")
+        validated["chart_style"] = style
+    if "node_mode" in changes:
+        node_mode = str(changes["node_mode"])
+        if node_mode not in ("mean", "true"):
+            raise ValueError("Невалиден режим на лунните възли.")
+        validated["node_mode"] = node_mode
+    if "combustion_orb" in changes:
+        try:
+            orb = float(str(changes["combustion_orb"]).replace(",", "."))
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Невалиден орбис на изгаряне.") from exc
+        if not 0.0 < orb <= 30.0:
+            raise ValueError("Орбисът на изгаряне трябва да бъде между 0.1° и 30°.")
+        validated["combustion_orb"] = f"{orb:g}"
+
+    with USER_SETTINGS_LOCK:
+        settings = load_user_settings()
+        settings.update(validated)
+        temporary_path = USER_SETTINGS_PATH.with_suffix(".json.tmp")
+        temporary_path.write_text(
+            json.dumps(settings, ensure_ascii=False, indent=2), encoding="utf-8"
+        )
+        os.replace(temporary_path, USER_SETTINGS_PATH)
+    return settings
+
+
+@app.route("/api/user-settings", methods=["GET", "POST"])
+def user_settings() -> object:
+    if request.method == "GET":
+        return jsonify({"ok": True, "settings": load_user_settings()})
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify({"ok": False, "error": "Липсват настройки за запазване."}), 400
+    try:
+        settings = save_user_settings(payload)
+    except (OSError, ValueError) as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 400
+    return jsonify({"ok": True, "settings": settings})
 
 
 def get_last_horoscope_folder() -> str:
@@ -427,6 +529,10 @@ def remember_horoscope_folder(path: str) -> None:
         pass
 
 
+class NativeFileDialogError(RuntimeError):
+    """Нативният прозорец за избор на файл не е могъл да се отвори."""
+
+
 def run_native_file_dialog(mode: str, initial_dir: str, filename: str = "") -> str | None:
     if getattr(sys, "frozen", False):
         command = [str(DIALOG_HELPER), mode, initial_dir, filename]
@@ -435,6 +541,8 @@ def run_native_file_dialog(mode: str, initial_dir: str, filename: str = "") -> s
         if not helper_python.exists():
             helper_python = Path(sys.executable)
         command = [str(helper_python), str(DIALOG_HELPER), mode, initial_dir, filename]
+    if not DIALOG_HELPER.exists():
+        raise NativeFileDialogError("Липсва помощният файл за избор на хороскоп.")
     try:
         result = subprocess.run(
             command,
@@ -446,10 +554,20 @@ def run_native_file_dialog(mode: str, initial_dir: str, filename: str = "") -> s
             cwd=str(APP_ROOT),
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
-        path = result.stdout.strip()
-        return path or None
-    except (OSError, subprocess.SubprocessError, UnicodeError):
-        return None
+    except subprocess.TimeoutExpired as exc:
+        raise NativeFileDialogError("Прозорецът за избор на файл не отговори навреме.") from exc
+    except (OSError, subprocess.SubprocessError, UnicodeError) as exc:
+        raise NativeFileDialogError(f"Не можах да отворя прозореца за избор на файл: {exc}") from exc
+    if result.returncode != 0:
+        detail = result.stderr.strip()
+        if detail:
+            detail = detail.splitlines()[-1]
+        raise NativeFileDialogError(
+            "Не можах да отворя прозореца за избор на файл."
+            + (f" {detail}" if detail else "")
+        )
+    path = result.stdout.strip()
+    return path or None
 
 
 def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
@@ -547,23 +665,21 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     values["manualTzMinutes"] = str(tz_minutes)
 
     lat_abs = abs(latitude)
-    lat_deg = int(lat_abs)
-    lat_min = round((lat_abs - lat_deg) * 60)
-    if lat_min == 60:
-        lat_deg += 1
-        lat_min = 0
+    lat_total_seconds = round(lat_abs * 3600)
+    lat_deg, lat_remainder = divmod(lat_total_seconds, 3600)
+    lat_min, lat_sec = divmod(lat_remainder, 60)
     values["latitudeDegrees"] = str(lat_deg)
     values["latitudeMinutes"] = str(lat_min)
+    values["latitudeSeconds"] = str(lat_sec)
     values["latitudeHemisphere"] = "N" if latitude >= 0 else "S"
 
     lng_abs = abs(longitude)
-    lng_deg = int(lng_abs)
-    lng_min = round((lng_abs - lng_deg) * 60)
-    if lng_min == 60:
-        lng_deg += 1
-        lng_min = 0
+    lng_total_seconds = round(lng_abs * 3600)
+    lng_deg, lng_remainder = divmod(lng_total_seconds, 3600)
+    lng_min, lng_sec = divmod(lng_remainder, 60)
     values["longitudeDegrees"] = str(lng_deg)
     values["longitudeMinutes"] = str(lng_min)
+    values["longitudeSeconds"] = str(lng_sec)
     values["longitudeHemisphere"] = "E" if longitude >= 0 else "W"
 
     return values
@@ -583,7 +699,10 @@ def save_chart() -> object:
     except CalculationError as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
     content, filename = build_jhd_file(results, form_values)
-    target = run_native_file_dialog("save", get_last_horoscope_folder(), filename)
+    try:
+        target = run_native_file_dialog("save", get_last_horoscope_folder(), filename)
+    except NativeFileDialogError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
     if not target:
         return jsonify({"ok": False, "cancelled": True})
     try:
@@ -597,7 +716,10 @@ def save_chart() -> object:
 @app.post("/api/open-chart")
 def open_chart() -> object:
     global latest_calculator_view
-    target = run_native_file_dialog("open", get_last_horoscope_folder())
+    try:
+        target = run_native_file_dialog("open", get_last_horoscope_folder())
+    except NativeFileDialogError as exc:
+        return jsonify({"ok": False, "error": str(exc)}), 500
     if not target:
         return jsonify({"ok": False, "cancelled": True})
     try:
