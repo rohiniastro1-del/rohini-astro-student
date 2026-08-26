@@ -1,14 +1,20 @@
-function decimalToDegreeMinutes(value) {
-  const absolute = Math.abs(value);
-  let degrees = Math.floor(absolute);
-  let minutes = Math.round((absolute - degrees) * 60);
+function decimalToDms(value) {
+  const totalSeconds = Math.round(Math.abs(value) * 3600);
+  const degrees = Math.floor(totalSeconds / 3600);
+  const remainder = totalSeconds % 3600;
+  const minutes = Math.floor(remainder / 60);
+  const seconds = remainder % 60;
+  return { degrees, minutes, seconds };
+}
 
-  if (minutes === 60) {
-    degrees += 1;
-    minutes = 0;
-  }
-
-  return { degrees, minutes };
+function persistUserSetting(name, value) {
+  fetch("/api/user-settings", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ [name]: value }),
+  }).catch(() => {
+    // Настройката остава приложена в текущото отваряне дори при дискова грешка.
+  });
 }
 
 const NORTH_CHART_LAYOUTS = {
@@ -940,14 +946,16 @@ function bindCitySync(config) {
       return;
     }
 
-    const lat = decimalToDegreeMinutes(selected.lat);
-    const lon = decimalToDegreeMinutes(selected.lon);
+    const lat = decimalToDms(selected.lat);
+    const lon = decimalToDms(selected.lon);
 
     document.getElementById(config.latitudeDegreesId).value = lat.degrees;
     document.getElementById(config.latitudeMinutesId).value = lat.minutes;
+    document.getElementById(config.latitudeSecondsId).value = lat.seconds;
     document.getElementById(config.latitudeHemisphereId).value = selected.lat >= 0 ? "N" : "S";
     document.getElementById(config.longitudeDegreesId).value = lon.degrees;
     document.getElementById(config.longitudeMinutesId).value = lon.minutes;
+    document.getElementById(config.longitudeSecondsId).value = lon.seconds;
     document.getElementById(config.longitudeHemisphereId).value = selected.lon >= 0 ? "E" : "W";
   };
 
@@ -1484,6 +1492,11 @@ function bindSegmentedDateTimeControls() {
       return;
     }
 
+    if (!isDate) {
+      const preciseTime = target.value.match(/^\d{2}:\d{2}:\d{2}(\.\d+)$/);
+      target.dataset.subsecond = preciseTime?.[1] || "";
+    }
+
     const validateInput = (input) => {
       const value = input.value.trim();
       const ranges = {
@@ -1519,13 +1532,14 @@ function bindSegmentedDateTimeControls() {
         const year = values.year.padStart(4, "0");
         target.value = `${year}-${values.month.padStart(2, "0")}-${values.day.padStart(2, "0")}`;
       } else {
-        target.value = `${values.hour.padStart(2, "0")}:${values.minute.padStart(2, "0")}:${values.second.padStart(2, "0")}`;
+        target.value = `${values.hour.padStart(2, "0")}:${values.minute.padStart(2, "0")}:${values.second.padStart(2, "0")}${target.dataset.subsecond || ""}`;
       }
     };
 
     inputs.forEach((input, index) => {
       input.addEventListener("input", () => {
         input.value = input.value.replace(/\D/g, "");
+        if (!isDate) target.dataset.subsecond = "";
         validateInput(input);
         syncTarget();
 
@@ -1961,11 +1975,13 @@ function bindDesktopDaivaWorkspace() {
     try { localStorage.setItem(TIME_UNIT_STORAGE_KEY, desktopTimeUnit.value); } catch (_error) { /* current session only */ }
   });
 
-  let globalChartStyle = "north";
-  try {
-    globalChartStyle = localStorage.getItem("rohini.globalChartStyle") === "south" ? "south" : "north";
-  } catch (_error) {
-    globalChartStyle = "north";
+  let globalChartStyle = body.dataset.persistentChartStyle;
+  if (!['north', 'south'].includes(globalChartStyle)) {
+    try {
+      globalChartStyle = localStorage.getItem("rohini.globalChartStyle") === "south" ? "south" : "north";
+    } catch (_error) {
+      globalChartStyle = "north";
+    }
   }
 
   const renderDesktopCharts = (style) => {
@@ -2010,6 +2026,7 @@ function bindDesktopDaivaWorkspace() {
       } catch (_error) {
         // The selected style still applies for the current session.
       }
+      persistUserSetting("chart_style", globalChartStyle);
     }
   };
 
@@ -2070,17 +2087,55 @@ function bindDesktopDaivaWorkspace() {
   const analysisEmpty = analysisField?.querySelector(".desktop-analysis-empty");
   const analysisViews = [...(analysisField?.querySelectorAll("[data-desktop-analysis-view]") || [])];
   const analysisButtons = [...(analysisField?.querySelectorAll("[data-desktop-analysis]") || [])];
+  const ANALYSIS_STATE_KEY = "rohini.desktopAnalysisState.v1";
+  const appSessionId = body.dataset.appSessionId || "";
+  const validAnalysisNames = new Set(analysisViews.map((view) => view.dataset.desktopAnalysisView));
+  let currentAnalysisName = "";
+  let rememberedDashaSystem = "";
+  let restoredAnalysisState = null;
+
+  try {
+    const candidate = JSON.parse(sessionStorage.getItem(ANALYSIS_STATE_KEY) || "null");
+    if (candidate?.sessionId === appSessionId && validAnalysisNames.has(candidate.view)) {
+      restoredAnalysisState = candidate;
+      rememberedDashaSystem = String(candidate.dashaSystem || "");
+    } else {
+      sessionStorage.removeItem(ANALYSIS_STATE_KEY);
+    }
+  } catch (_error) {
+    try { sessionStorage.removeItem(ANALYSIS_STATE_KEY); } catch (_storageError) { /* текуща страница */ }
+  }
+
+  const rememberAnalysis = () => {
+    if (!currentAnalysisName) {
+      try { sessionStorage.removeItem(ANALYSIS_STATE_KEY); } catch (_error) { /* текуща страница */ }
+      return;
+    }
+    try {
+      sessionStorage.setItem(ANALYSIS_STATE_KEY, JSON.stringify({
+        sessionId: appSessionId,
+        view: currentAnalysisName,
+        dashaSystem: rememberedDashaSystem,
+      }));
+    } catch (_error) { /* текуща страница */ }
+  };
 
   const clearAnalysis = () => {
+    currentAnalysisName = "";
+    rememberedDashaSystem = "";
     analysisViews.forEach((view) => { view.hidden = true; });
     analysisButtons.forEach((button) => button.classList.remove("is-active"));
     if (analysisEmpty) analysisEmpty.hidden = false;
+    rememberAnalysis();
   };
 
   const showAnalysis = (name) => {
+    if (!validAnalysisNames.has(name)) return;
+    currentAnalysisName = name;
     analysisViews.forEach((view) => { view.hidden = view.dataset.desktopAnalysisView !== name; });
     analysisButtons.forEach((button) => button.classList.toggle("is-active", button.dataset.desktopAnalysis === name));
     if (analysisEmpty) analysisEmpty.hidden = true;
+    rememberAnalysis();
   };
 
   const analysisMenus = [...(analysisField?.querySelectorAll(".desktop-analysis-menu, .desktop-dasha-menu") || [])];
@@ -2195,6 +2250,7 @@ function bindDesktopDaivaWorkspace() {
   dashaButtons.forEach((button) => {
     button.addEventListener("click", () => {
       dashaState.system = button.dataset.dashaSystem;
+      rememberedDashaSystem = dashaState.system;
       dashaState.yearDays = null;
       dashaState.parents = [];
       loadDashaLevel();
@@ -2212,6 +2268,20 @@ function bindDesktopDaivaWorkspace() {
     dashaState.parents.pop();
     loadDashaLevel();
   });
+
+  if (restoredAnalysisState) {
+    if (
+      restoredAnalysisState.view === "dashas"
+      && dashaButtons.some((button) => button.dataset.dashaSystem === rememberedDashaSystem)
+    ) {
+      dashaState.system = rememberedDashaSystem;
+      dashaState.yearDays = null;
+      dashaState.parents = [];
+      loadDashaLevel();
+    } else {
+      showAnalysis(restoredAnalysisState.view);
+    }
+  }
 
   let lastRightClick = 0;
   analysisField?.addEventListener("contextmenu", (event) => {
@@ -2254,7 +2324,13 @@ function bindDesktopDaivaWorkspace() {
 
   const updateSegmentedValue = (hiddenId, value, type) => {
     const hidden = document.getElementById(hiddenId);
-    if (hidden) hidden.value = value;
+    if (hidden) {
+      hidden.value = value;
+      if (type === "time") {
+        const preciseTime = value.match(/^\d{2}:\d{2}:\d{2}(\.\d+)$/);
+        hidden.dataset.subsecond = preciseTime?.[1] || "";
+      }
+    }
     const control = document.querySelector(`[data-segmented-${type}][data-target="${hiddenId}"]`);
     if (!control) return;
     const parts = type === "date"
@@ -2352,7 +2428,9 @@ function bindDesktopDaivaWorkspace() {
   };
 
   const formatDuration = (seconds) => {
-    const total = Math.max(0, Number(seconds) || 0);
+    // Keep sub-second precision for the actual move, but show students a
+    // simple whole-second duration in the context menu.
+    const total = Math.max(0, Math.round(Number(seconds) || 0));
     const hours = Math.floor(total / 3600);
     const minutes = Math.floor((total % 3600) / 60);
     const secs = total % 60;
@@ -2518,22 +2596,10 @@ function bindDesktopDaivaWorkspace() {
     const transitTarget = contextCard.dataset.chartPrefix === "transit";
     const dateId = transitTarget ? "transitDate" : "birthDate";
     const timeId = transitTarget ? "transitTime" : "birthTime";
-    const seconds = forward ? contextBoundary.forward_seconds + 1 : contextBoundary.backward_seconds + 1;
-    const response = await fetch("/api/time-dynamics/shift", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        date: document.getElementById(dateId)?.value,
-        time: document.getElementById(timeId)?.value,
-        amount: seconds,
-        unit: "second",
-        forward,
-      }),
-    });
-    const shifted = await response.json();
-    if (!response.ok) return;
-    updateSegmentedValue(dateId, shifted.date, "date");
-    updateSegmentedValue(timeId, shifted.time, "time");
+    const boundary = forward ? contextBoundary.forward : contextBoundary.backward;
+    if (!boundary?.date || !boundary?.time) return;
+    updateSegmentedValue(dateId, boundary.date, "date");
+    updateSegmentedValue(timeId, boundary.time, "time");
     try {
       const transitViewOpen = !transitWorkspace?.hidden;
       sessionStorage.setItem("rohini.desktopActiveView", transitViewOpen ? "transits" : "chakra");
@@ -2573,9 +2639,11 @@ document.addEventListener("DOMContentLoaded", () => {
     citySelectId: "cityName",
     latitudeDegreesId: "latitudeDegrees",
     latitudeMinutesId: "latitudeMinutes",
+    latitudeSecondsId: "latitudeSeconds",
     latitudeHemisphereId: "latitudeHemisphere",
     longitudeDegreesId: "longitudeDegrees",
     longitudeMinutesId: "longitudeMinutes",
+    longitudeSecondsId: "longitudeSeconds",
     longitudeHemisphereId: "longitudeHemisphere",
   });
 
@@ -2583,9 +2651,11 @@ document.addEventListener("DOMContentLoaded", () => {
     citySelectId: "transitCityName",
     latitudeDegreesId: "transitLatitudeDegrees",
     latitudeMinutesId: "transitLatitudeMinutes",
+    latitudeSecondsId: "transitLatitudeSeconds",
     latitudeHemisphereId: "transitLatitudeHemisphere",
     longitudeDegreesId: "transitLongitudeDegrees",
     longitudeMinutesId: "transitLongitudeMinutes",
+    longitudeSecondsId: "transitLongitudeSeconds",
     longitudeHemisphereId: "transitLongitudeHemisphere",
   });
 
@@ -2604,9 +2674,11 @@ document.addEventListener("DOMContentLoaded", () => {
     [
       "latitudeDegrees",
       "latitudeMinutes",
+      "latitudeSeconds",
       "latitudeHemisphere",
       "longitudeDegrees",
       "longitudeMinutes",
+      "longitudeSeconds",
       "longitudeHemisphere",
     ],
     syncNatalCity,
@@ -2616,9 +2688,11 @@ document.addEventListener("DOMContentLoaded", () => {
     [
       "transitLatitudeDegrees",
       "transitLatitudeMinutes",
+      "transitLatitudeSeconds",
       "transitLatitudeHemisphere",
       "transitLongitudeDegrees",
       "transitLongitudeMinutes",
+      "transitLongitudeSeconds",
       "transitLongitudeHemisphere",
     ],
     syncTransitCity,
@@ -2652,6 +2726,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Keep one persisted source. A stale localStorage value used to replace
       // the server value here and remove valid markers after rendering.
       document.cookie = `rohini_combustion_orb=${encodeURIComponent(value)}; Max-Age=31536000; Path=/; SameSite=Lax`;
+      persistUserSetting("combustion_orb", value);
       reconcileDesktopCombustionBadges();
       reconcileDesktopGandantaBadges();
       reconcileDesktopPlanetaryWar();
@@ -2673,8 +2748,8 @@ function initChartSaveOpen() {
   saveButton?.addEventListener("click", async () => {
     const ids = [
       "birthDate", "birthTime", "cityName",
-      "latitudeDegrees", "latitudeMinutes", "latitudeHemisphere",
-      "longitudeDegrees", "longitudeMinutes", "longitudeHemisphere",
+      "latitudeDegrees", "latitudeMinutes", "latitudeSeconds", "latitudeHemisphere",
+      "longitudeDegrees", "longitudeMinutes", "longitudeSeconds", "longitudeHemisphere",
       "timezoneMode", "nodeMode", "manualTzSign", "manualTzHours", "manualTzMinutes",
       "combustionOrbDegrees", "showOuterPlanets",
     ];
@@ -2866,7 +2941,6 @@ function initGlobalNodeMode() {
     try {
       document.cookie = `rohini_node_mode=${value}; path=/; max-age=31536000`;
     } catch (_error) { /* текуща сесия */ }
+    persistUserSetting("node_mode", value);
   });
 }
-
-
