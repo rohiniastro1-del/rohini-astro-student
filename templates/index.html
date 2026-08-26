@@ -6,10 +6,10 @@
     <title>Рохини Астро • Ведически Калкулатор</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v=static_token) }}">
   </head>
-  <body class="{% if results %}has-desktop-workspace{% endif %}{% if form_values.showOuterPlanets == 'on' %} show-desktop-outer-planets{% endif %}">
+  <body class="{% if results %}has-desktop-workspace{% endif %}{% if form_values.showOuterPlanets == 'on' %} show-desktop-outer-planets{% endif %}" data-persistent-chart-style="{{ persistent_chart_style }}" data-app-session-id="{{ app_session_id }}">
     <nav class="desktop-menubar" aria-label="Основно меню">
       <div class="desktop-menubar__tabs">
-        <button type="button" class="desktop-menu-tab is-active" data-desktop-view="chakra">Рохини Чакра</button>
+        <button type="button" class="desktop-menu-tab is-active" data-desktop-view="chakra">Рохини Карта</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="data">Данни</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="transits">Транзити</button>
         <button type="button" class="desktop-menu-tab" data-desktop-view="about">За програмата</button>
@@ -109,7 +109,7 @@
                   <span class="segmented-separator" aria-hidden="true">:</span>
                   <label class="segmented-part">
                     <span>Секунди</span>
-                    <input type="text" inputmode="numeric" autocomplete="off" maxlength="2" data-part="second" value="{{ form_values.birthTime.split(':')[2] if form_values.birthTime else '' }}" placeholder="СС" required>
+                    <input type="text" inputmode="numeric" autocomplete="off" maxlength="2" data-part="second" value="{{ form_values.birthTime.split(':')[2][:2] if form_values.birthTime else '' }}" placeholder="СС" required>
                   </label>
                 </div>
                 <input type="hidden" name="birthTime" id="birthTime" value="{{ form_values.birthTime }}">
@@ -149,12 +149,16 @@
                   <p class="coordinate-panel__title">Ширина</p>
                   <div class="coordinate-block">
                     <label class="field">
-                      <span>Градуси</span>
+                      <span aria-label="Градуси">°</span>
                       <input type="number" name="latitudeDegrees" id="latitudeDegrees" min="0" max="90" value="{{ form_values.latitudeDegrees }}" required>
                     </label>
                     <label class="field">
-                      <span>Минути</span>
+                      <span aria-label="Минути">′</span>
                       <input type="number" name="latitudeMinutes" id="latitudeMinutes" min="0" max="59" value="{{ form_values.latitudeMinutes }}" required>
+                    </label>
+                    <label class="field">
+                      <span aria-label="Секунди">″</span>
+                      <input type="number" name="latitudeSeconds" id="latitudeSeconds" min="0" max="59" value="{{ form_values.latitudeSeconds }}" required>
                     </label>
                     <label class="field">
                       <span>Посока</span>
@@ -169,12 +173,16 @@
                   <p class="coordinate-panel__title">Дължина</p>
                   <div class="coordinate-block">
                     <label class="field">
-                      <span>Градуси</span>
+                      <span aria-label="Градуси">°</span>
                       <input type="number" name="longitudeDegrees" id="longitudeDegrees" min="0" max="180" value="{{ form_values.longitudeDegrees }}" required>
                     </label>
                     <label class="field">
-                      <span>Минути</span>
+                      <span aria-label="Минути">′</span>
                       <input type="number" name="longitudeMinutes" id="longitudeMinutes" min="0" max="59" value="{{ form_values.longitudeMinutes }}" required>
+                    </label>
+                    <label class="field">
+                      <span aria-label="Секунди">″</span>
+                      <input type="number" name="longitudeSeconds" id="longitudeSeconds" min="0" max="59" value="{{ form_values.longitudeSeconds }}" required>
                     </label>
                     <label class="field">
                       <span>Посока</span>
@@ -263,7 +271,7 @@
                       <span class="segmented-separator" aria-hidden="true">:</span>
                       <label class="segmented-part">
                         <span>Секунди</span>
-                        <input type="text" inputmode="numeric" autocomplete="off" maxlength="2" data-part="second" value="{{ form_values.transitTime.split(':')[2] if form_values.transitTime else '' }}" placeholder="СС">
+                        <input type="text" inputmode="numeric" autocomplete="off" maxlength="2" data-part="second" value="{{ form_values.transitTime.split(':')[2][:2] if form_values.transitTime else '' }}" placeholder="СС">
                       </label>
                     </div>
                     <input type="hidden" name="transitTime" id="transitTime" value="{{ form_values.transitTime }}">
@@ -299,12 +307,16 @@
                     <p class="coordinate-panel__title">Ширина</p>
                     <div class="coordinate-block">
                       <label class="field">
-                        <span>Градуси</span>
+                        <span aria-label="Градуси">°</span>
                         <input type="number" name="transitLatitudeDegrees" id="transitLatitudeDegrees" min="0" max="90" value="{{ form_values.transitLatitudeDegrees }}">
                       </label>
                       <label class="field">
-                        <span>Минути</span>
+                        <span aria-label="Минути">′</span>
                         <input type="number" name="transitLatitudeMinutes" id="transitLatitudeMinutes" min="0" max="59" value="{{ form_values.transitLatitudeMinutes }}">
+                      </label>
+                      <label class="field">
+                        <span aria-label="Секунди">″</span>
+                        <input type="number" name="transitLatitudeSeconds" id="transitLatitudeSeconds" min="0" max="59" value="{{ form_values.transitLatitudeSeconds }}">
                       </label>
                       <label class="field">
                         <span>Посока</span>
@@ -319,12 +331,16 @@
                     <p class="coordinate-panel__title">Дължина</p>
                     <div class="coordinate-block">
                       <label class="field">
-                        <span>Градуси</span>
+                        <span aria-label="Градуси">°</span>
                         <input type="number" name="transitLongitudeDegrees" id="transitLongitudeDegrees" min="0" max="180" value="{{ form_values.transitLongitudeDegrees }}">
                       </label>
                       <label class="field">
-                        <span>Минути</span>
+                        <span aria-label="Минути">′</span>
                         <input type="number" name="transitLongitudeMinutes" id="transitLongitudeMinutes" min="0" max="59" value="{{ form_values.transitLongitudeMinutes }}">
+                      </label>
+                      <label class="field">
+                        <span aria-label="Секунди">″</span>
+                        <input type="number" name="transitLongitudeSeconds" id="transitLongitudeSeconds" min="0" max="59" value="{{ form_values.transitLongitudeSeconds }}">
                       </label>
                       <label class="field">
                         <span>Посока</span>
@@ -436,7 +452,7 @@
           {% if error %}
             <div class="message error-message">{{ error }}</div>
           {% elif results %}
-            <section class="desktop-chakra-workspace" aria-label="Работен екран Рохини Чакра">
+            <section class="desktop-chakra-workspace" aria-label="Работен екран Рохини Карта">
               <div class="desktop-chart-column" id="natalResult">
                 <article class="desktop-chart desktop-chart--rashi" data-chart-slot="top" data-chart-code="D1" data-chart-style-group="desktop-natal">
                   <script type="application/json" class="chart-payload">{{ results.d1_chart_data | tojson }}</script>
