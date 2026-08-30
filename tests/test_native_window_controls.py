@@ -1,5 +1,8 @@
+import json
 import unittest
 from pathlib import Path
+from tempfile import TemporaryDirectory
+from unittest.mock import MagicMock, patch
 
 import native_window
 from native_window import WindowApi, app, window_api
@@ -20,6 +23,12 @@ class FakeWindow:
 
     def destroy(self) -> None:
         self.calls.append("destroy")
+
+    def load_url(self, url: str) -> None:
+        self.calls.append(f"load:{url}")
+
+    def show(self) -> None:
+        self.calls.append("show")
 
 
 class NativeWindowControlTests(unittest.TestCase):
@@ -44,6 +53,50 @@ class NativeWindowControlTests(unittest.TestCase):
         api.close()
 
         self.assertEqual(fake.calls, ["restore", "maximize", "minimize", "destroy"])
+
+    def test_loaded_shell_file_refreshes_and_shows_the_existing_window(self) -> None:
+        fake = FakeWindow()
+        api = WindowApi()
+        api.set_window(fake, restore_url="http://127.0.0.1:5051/?restore=1")
+
+        api.show_loaded_chart()
+
+        self.assertEqual(
+            fake.calls,
+            ["load:http://127.0.0.1:5051/?restore=1", "show"],
+        )
+
+    def test_only_one_jhd_command_line_path_is_accepted(self) -> None:
+        self.assertEqual(
+            native_window.requested_jhd_path([r"C:\Карти\пример.JHD"]),
+            Path(r"C:\Карти\пример.JHD"),
+        )
+        self.assertIsNone(native_window.requested_jhd_path([r"C:\Карти\пример.txt"]))
+        self.assertIsNone(native_window.requested_jhd_path(["one.jhd", "two.jhd"]))
+
+    def test_jhd_path_is_forwarded_to_an_existing_instance(self) -> None:
+        response = MagicMock()
+        response.status = 200
+        response.read.return_value = b'{"ok": true}'
+        response.__enter__.return_value = response
+
+        with TemporaryDirectory() as folder:
+            state_path = Path(folder) / "instance.json"
+            state_path.write_text(json.dumps({"pid": 123, "port": 54321}), encoding="utf-8")
+            with (
+                patch.object(native_window, "INSTANCE_STATE_PATH", state_path),
+                patch.object(native_window.urllib.request, "urlopen", return_value=response) as opened,
+            ):
+                self.assertTrue(
+                    native_window.forward_jhd_to_running_instance(Path(r"C:\Карти\пример.jhd"))
+                )
+
+        forwarded_request = opened.call_args.args[0]
+        self.assertEqual(
+            json.loads(forwarded_request.data.decode("utf-8"))["path"],
+            r"C:\Карти\пример.jhd",
+        )
+        self.assertEqual(forwarded_request.method, "POST")
 
     def test_desktop_uses_the_native_windows_frame(self) -> None:
         source = Path(native_window.__file__).read_text(encoding="utf-8")
