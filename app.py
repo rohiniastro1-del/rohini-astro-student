@@ -19,7 +19,7 @@ if PACKAGE_DIR.exists():
 
 from datetime import datetime, timedelta
 
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, has_request_context, jsonify, render_template, request
 
 from vedic_app.astro import (
     CalculationError,
@@ -55,7 +55,7 @@ def apply_global_node_mode(
     # Първо приемаме старото cookie, за да мигрираме без промяна избора
     # на потребителите от предишните версии. Новият интерфейс записва едновременно
     # cookie и постоянния файл, затова след миграцията те остават синхронизирани.
-    saved_node_mode = request.cookies.get("rohini_node_mode", "")
+    saved_node_mode = request.cookies.get("rohini_node_mode", "") if has_request_context() else ""
     if saved_node_mode not in ("mean", "true"):
         saved_node_mode = settings.get("node_mode", "")
     if saved_node_mode in ("mean", "true"):
@@ -570,6 +570,42 @@ def run_native_file_dialog(mode: str, initial_dir: str, filename: str = "") -> s
     return path or None
 
 
+def _decimal_degrees_to_jhd_coordinate(value: float) -> float:
+    """Convert decimal degrees to JHora's degrees.decimal-minutes format."""
+    sign = -1.0 if value < 0 else 1.0
+    absolute = abs(value)
+    degrees = int(absolute)
+    decimal_minutes = (absolute - degrees) * 60.0
+    return sign * (degrees + decimal_minutes / 100.0)
+
+
+def _jhd_coordinate_to_decimal_degrees(value: float, *, maximum: int) -> float:
+    """Convert JHora's degrees.decimal-minutes coordinate to decimal degrees."""
+    sign = -1.0 if value < 0 else 1.0
+    absolute = abs(value)
+    degrees = int(absolute)
+    decimal_minutes = (absolute - degrees) * 100.0
+
+    # Tolerate only floating-point noise at an exact 60-minute carry.
+    if decimal_minutes >= 60.0 and decimal_minutes < 60.0 + 1e-7:
+        degrees += 1
+        decimal_minutes = 0.0
+
+    if decimal_minutes < 0.0 or decimal_minutes >= 60.0:
+        raise CalculationError("Невалидни координати във файла .jhd.")
+    if degrees > maximum or (degrees == maximum and decimal_minutes > 1e-7):
+        raise CalculationError("Координатите във файла .jhd са извън допустимия обхват.")
+
+    return sign * (degrees + decimal_minutes / 60.0)
+
+
+def _has_invalid_jhd_minutes(value: float) -> bool:
+    """Identify the decimal-degree coordinates written by older Rohini builds."""
+    absolute = abs(value)
+    decimal_minutes = (absolute - int(absolute)) * 100.0
+    return decimal_minutes >= 60.0 + 1e-7
+
+
 def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
     local_dt = chart["local_datetime"]
     latitude = float(chart["latitude"])
@@ -586,7 +622,10 @@ def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
         tz_jhd = -tz_jhd
 
     tz_decimal = -offset_minutes / 60.0
-    jhd_longitude = -longitude
+    # JHora stores coordinates as degrees.decimal-minutes and reverses the
+    # usual longitude sign (east is negative, west is positive).
+    jhd_longitude = -_decimal_degrees_to_jhd_coordinate(longitude)
+    jhd_latitude = _decimal_degrees_to_jhd_coordinate(latitude)
 
     city_name = str(form_values.get("cityName") or "").strip()
     city_entry = CITY_LOOKUP.get(city_name) if city_name else None
@@ -603,7 +642,7 @@ def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
         f"{time_decimal:.10f}",
         f"{tz_jhd:.6f}",
         f"{jhd_longitude:.6f}",
-        f"{latitude:.6f}",
+        f"{jhd_latitude:.6f}",
         "0.000000",
         f"{tz_decimal:.6f}",
         f"{tz_decimal:.6f}",
@@ -635,7 +674,7 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     time_decimal = float(tokens[3])
     tz_field5 = float(tokens[4])
     jhd_longitude = float(tokens[5])
-    latitude = float(tokens[6])
+    jhd_latitude = float(tokens[6])
 
     total_seconds = round(time_decimal * 3600)
     hours = total_seconds // 3600
@@ -647,7 +686,15 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     tz_hours = int(abs_tz)
     tz_minutes = round((abs_tz - tz_hours) * 100)
 
-    longitude = -jhd_longitude
+    if _has_invalid_jhd_minutes(jhd_latitude) or _has_invalid_jhd_minutes(jhd_longitude):
+        # Rohini versions before this correction wrote ordinary decimal
+        # degrees.  Such a file can be recognized safely whenever either
+        # fractional part would mean 60 or more JHora minutes.
+        latitude = jhd_latitude
+        longitude = -jhd_longitude
+    else:
+        latitude = _jhd_coordinate_to_decimal_degrees(jhd_latitude, maximum=90)
+        longitude = -_jhd_coordinate_to_decimal_degrees(jhd_longitude, maximum=180)
 
     place_name = ""
     for token in tokens[8:]:
@@ -685,6 +732,34 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     return values
 
 
+def load_jhd_path(path: str | os.PathLike[str]) -> dict[str, str]:
+    """Load one local JHora file through the same validated application flow."""
+    global latest_calculator_view
+
+    candidate = Path(path).expanduser()
+    if candidate.suffix.lower() != ".jhd":
+        raise CalculationError("Може да бъде отворен само файл във формат .jhd.")
+    if not candidate.is_file():
+        raise CalculationError("Избраният .jhd файл не съществува.")
+    try:
+        if candidate.stat().st_size > 2 * 1024 * 1024:
+            raise CalculationError("Избраният .jhd файл е необичайно голям.")
+        content = candidate.read_text(encoding="utf-8-sig")
+    except OSError as exc:
+        raise OSError(f"Не можах да прочета файла: {exc}") from exc
+
+    form_values = parse_jhd_to_form_values(content)
+    apply_global_node_mode(form_values)
+    results = calculate_reading(form_values, build_mode="natal")
+    latest_calculator_view = {
+        "form_values": deepcopy(form_values),
+        "results": results,
+        "build_mode": "natal",
+    }
+    remember_horoscope_folder(str(candidate))
+    return form_values
+
+
 @app.post("/api/save-chart")
 def save_chart() -> object:
     payload = request.get_json(silent=True)
@@ -715,7 +790,6 @@ def save_chart() -> object:
 
 @app.post("/api/open-chart")
 def open_chart() -> object:
-    global latest_calculator_view
     try:
         target = run_native_file_dialog("open", get_last_horoscope_folder())
     except NativeFileDialogError as exc:
@@ -723,21 +797,9 @@ def open_chart() -> object:
     if not target:
         return jsonify({"ok": False, "cancelled": True})
     try:
-        content = Path(target).read_text(encoding="utf-8")
-    except OSError as exc:
-        return jsonify({"ok": False, "error": str(exc)}), 500
-    remember_horoscope_folder(target)
-    try:
-        form_values = parse_jhd_to_form_values(content)
-        apply_global_node_mode(form_values)
-        results = calculate_reading(form_values, build_mode="natal")
-    except (CalculationError, ValueError) as exc:
+        load_jhd_path(target)
+    except (CalculationError, OSError, UnicodeError, ValueError) as exc:
         return jsonify({"ok": False, "error": str(exc)}), 400
-    latest_calculator_view = {
-        "form_values": deepcopy(form_values),
-        "results": results,
-        "build_mode": "natal",
-    }
     return jsonify({"ok": True, "name": Path(target).name})
 
 
