@@ -10,6 +10,7 @@ import sys
 import threading
 import time
 from copy import deepcopy
+from decimal import Decimal, InvalidOperation
 from datetime import datetime, timedelta
 from pathlib import Path
 
@@ -606,22 +607,40 @@ def _has_invalid_jhd_minutes(value: float) -> bool:
     return decimal_minutes >= 60.0 + 1e-7
 
 
+def _jhd_time_microseconds(text: str, *, decimal_hours: bool = False) -> int:
+    """Decode hours.decimal-minutes without losing subsecond precision."""
+    try:
+        value = Decimal(text)
+        if not value.is_finite() or value < 0:
+            raise ValueError
+        hours = int(value)
+        minutes = (value - hours) * 100
+        if not decimal_hours and minutes >= 60:
+            raise ValueError
+        seconds = value * 3600 if decimal_hours else hours * 3600 + minutes * 60
+        return int((seconds * 1000000).to_integral_value())
+    except (InvalidOperation, ValueError, OverflowError) as exc:
+        raise CalculationError("Невалиден час или часова зона във файла .jhd.") from exc
+
+
+def _jhd_time_text(total_microseconds: int) -> str:
+    hours, remainder = divmod(total_microseconds, 3600 * 1000000)
+    return f"{Decimal(hours) + Decimal(remainder) / Decimal(6000000000):.12f}"
+
+
 def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
     local_dt = chart["local_datetime"]
     latitude = float(chart["latitude"])
     longitude = float(chart["longitude"])
-    offset_minutes = int((local_dt.utcoffset() or timedelta()).total_seconds() // 60)
-
-    time_decimal = local_dt.hour + local_dt.minute / 60.0 + local_dt.second / 3600.0
-
-    abs_minutes = abs(offset_minutes)
-    tz_hours = abs_minutes // 60
-    tz_minutes = abs_minutes % 60
-    tz_jhd = tz_hours + tz_minutes / 100.0
-    if offset_minutes >= 0:
-        tz_jhd = -tz_jhd
-
-    tz_decimal = -offset_minutes / 60.0
+    offset_seconds = round((local_dt.utcoffset() or timedelta()).total_seconds())
+    time_jhd = _jhd_time_text(
+        ((local_dt.hour * 60 + local_dt.minute) * 60 + local_dt.second) * 1000000
+        + local_dt.microsecond
+    )
+    tz_jhd = _jhd_time_text(abs(offset_seconds) * 1000000)
+    if offset_seconds > 0:
+        tz_jhd = "-" + tz_jhd
+    tz_decimal = -offset_seconds / 3600.0
     # JHora stores coordinates as degrees.decimal-minutes and reverses the
     # usual longitude sign (east is negative, west is positive).
     jhd_longitude = -_decimal_degrees_to_jhd_coordinate(longitude)
@@ -639,8 +658,8 @@ def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
         str(local_dt.month),
         str(local_dt.day),
         str(local_dt.year),
-        f"{time_decimal:.10f}",
-        f"{tz_jhd:.6f}",
+        time_jhd,
+        tz_jhd,
         f"{jhd_longitude:.6f}",
         f"{jhd_latitude:.6f}",
         "0.000000",
@@ -662,7 +681,7 @@ def build_jhd_file(chart: dict, form_values: dict) -> tuple[str, str]:
     return content, filename
 
 
-def parse_jhd_to_form_values(content: str) -> dict[str, str]:
+def parse_jhd_to_form_values(content: str, *, legacy_decimal_time: bool = False) -> dict[str, str]:
     lines = [line.strip() for line in content.splitlines() if line.strip()]
     tokens = lines if len(lines) > 1 else lines[0].split() if lines else []
     if len(tokens) < 7:
@@ -671,22 +690,27 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     month = int(tokens[0])
     day = int(tokens[1])
     year = int(tokens[2])
-    time_decimal = float(tokens[3])
     tz_field5 = float(tokens[4])
     jhd_longitude = float(tokens[5])
     jhd_latitude = float(tokens[6])
 
-    total_seconds = round(time_decimal * 3600)
-    hours = total_seconds // 3600
-    minutes = (total_seconds % 3600) // 60
-    seconds = total_seconds % 60
+    legacy_coordinates = _has_invalid_jhd_minutes(jhd_latitude) or _has_invalid_jhd_minutes(jhd_longitude)
+    # Unmarked, ambiguous files default to JHora. Never infer the time format
+    # from a plausible fractional value alone. Explicit legacy mode is available
+    # for confirmed old Rohini files with otherwise valid JHora coordinates.
+    total_microseconds = _jhd_time_microseconds(tokens[3], decimal_hours=legacy_decimal_time or legacy_coordinates)
+    if total_microseconds >= 86400 * 1000000:
+        raise CalculationError("Часът във файла .jhd е извън допустимия обхват.")
+    total_seconds, microseconds = divmod(total_microseconds, 1000000)
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
 
     east = tz_field5 < 0
-    abs_tz = abs(tz_field5)
-    tz_hours = int(abs_tz)
-    tz_minutes = round((abs_tz - tz_hours) * 100)
+    tz_total_seconds = round(_jhd_time_microseconds(tokens[4].lstrip("+-")) / 1000000)
+    tz_hours, tz_remainder = divmod(tz_total_seconds, 3600)
+    tz_minutes, tz_seconds = divmod(tz_remainder, 60)
 
-    if _has_invalid_jhd_minutes(jhd_latitude) or _has_invalid_jhd_minutes(jhd_longitude):
+    if legacy_coordinates:
         # Rohini versions before this correction wrote ordinary decimal
         # degrees.  Such a file can be recognized safely whenever either
         # fractional part would mean 60 or more JHora minutes.
@@ -705,11 +729,14 @@ def parse_jhd_to_form_values(content: str) -> dict[str, str]:
     values = default_form_values()
     values["birthDate"] = f"{year:04d}-{month:02d}-{day:02d}"
     values["birthTime"] = f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+    if microseconds:
+        values["birthTime"] += f".{microseconds:06d}"
     values["cityName"] = place_name
     values["timezoneMode"] = "manual"
     values["manualTzSign"] = "+" if east else "-"
     values["manualTzHours"] = str(tz_hours)
     values["manualTzMinutes"] = str(tz_minutes)
+    values["manualTzSeconds"] = str(tz_seconds)
 
     lat_abs = abs(latitude)
     lat_total_seconds = round(lat_abs * 3600)
