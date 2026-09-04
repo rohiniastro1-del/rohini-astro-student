@@ -2750,7 +2750,7 @@ function initChartSaveOpen() {
       "birthDate", "birthTime", "cityName",
       "latitudeDegrees", "latitudeMinutes", "latitudeSeconds", "latitudeHemisphere",
       "longitudeDegrees", "longitudeMinutes", "longitudeSeconds", "longitudeHemisphere",
-      "timezoneMode", "nodeMode", "manualTzSign", "manualTzHours", "manualTzMinutes",
+      "timezoneMode", "nodeMode", "manualTzSign", "manualTzHours", "manualTzMinutes", "manualTzSeconds",
       "combustionOrbDegrees", "showOuterPlanets",
     ];
     const values = {};

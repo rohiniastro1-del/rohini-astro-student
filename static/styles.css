@@ -828,8 +828,8 @@ body * {
   margin: 0 0 5px;
 }
 .has-desktop-workspace.is-data-panel-open .coordinate-block {
-  grid-template-columns: repeat(3, minmax(0, 1fr)) 76px;
-  gap: 5px;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) 60px;
+  gap: 4px;
 }
 .has-desktop-workspace.is-data-panel-open .coordinate-block input[type="number"] {
   min-width: 0;
@@ -838,6 +838,13 @@ body * {
   font: 600 12px/1.2 "Segoe UI", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+.has-desktop-workspace.is-data-panel-open .coordinate-block input[type="number"]::-webkit-inner-spin-button,
+.has-desktop-workspace.is-data-panel-open .coordinate-block input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  -webkit-appearance: none;
 }
 .has-desktop-workspace.is-data-panel-open .desktop-global-chart-style button,
 .has-desktop-workspace.is-data-panel-open .form-actions button {
@@ -3974,6 +3981,10 @@ tbody th {
   background: linear-gradient(135deg, rgba(218, 195, 141, 0.38), rgba(255, 252, 241, 0.94));
   border-color: rgba(199, 168, 95, 0.3);
 }
+.field-grid.manual-tz-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .manual-tz-grid.is-hidden {
   display: none;
 }
