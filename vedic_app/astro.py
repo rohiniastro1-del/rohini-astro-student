@@ -74,6 +74,7 @@ FIELD_NAMES = {
         "manual_tz_sign": "manualTzSign",
         "manual_tz_hours": "manualTzHours",
         "manual_tz_minutes": "manualTzMinutes",
+        "manual_tz_seconds": "manualTzSeconds",
         "node_mode": "nodeMode",
     },
     "transit": {
@@ -92,6 +93,7 @@ FIELD_NAMES = {
         "manual_tz_sign": "transitManualTzSign",
         "manual_tz_hours": "transitManualTzHours",
         "manual_tz_minutes": "transitManualTzMinutes",
+        "manual_tz_seconds": "transitManualTzSeconds",
         "node_mode": "transitNodeMode",
     },
 }
@@ -490,6 +492,7 @@ def _default_chart_form_values(
         names["manual_tz_sign"]: "+",
         names["manual_tz_hours"]: "2",
         names["manual_tz_minutes"]: "0",
+        names["manual_tz_seconds"]: "0",
         names["node_mode"]: "true",
     }
 
@@ -632,25 +635,29 @@ def _dms_to_decimal(
     return value
 
 
-def _parse_manual_offset(sign_text: str, hours_text: str, minutes_text: str) -> int:
+def _parse_manual_offset(sign_text: str, hours_text: str, minutes_text: str, seconds_text: str = "0") -> float:
+    """Return offset in minutes, retaining whole-second historical offsets."""
     try:
         hours = int(hours_text)
         minutes = int(minutes_text)
+        seconds = int(seconds_text)
     except ValueError as exc:
-        raise CalculationError("Ръчната часова зона трябва да е в цели часове и минути.") from exc
+        raise CalculationError("Ръчната часова зона трябва да е в цели часове, минути и секунди.") from exc
 
-    if hours < 0 or hours > 14 or minutes < 0 or minutes >= 60:
+    if hours < 0 or hours > 14 or minutes < 0 or minutes >= 60 or seconds < 0 or seconds >= 60:
         raise CalculationError("Ръчната часова зона е извън позволения диапазон.")
 
-    total = hours * 60 + minutes
+    total = hours * 60 + minutes + seconds / 60
     return -total if sign_text == "-" else total
 
 
-def _format_utc_offset(total_minutes: int) -> str:
+def _format_utc_offset(total_minutes: float) -> str:
     sign = "+" if total_minutes >= 0 else "-"
-    absolute = abs(total_minutes)
-    hours, minutes = divmod(absolute, 60)
-    return f"UTC{sign}{hours:02d}:{minutes:02d}"
+    absolute = round(abs(total_minutes) * 60)
+    hours, remainder = divmod(absolute, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    suffix = f":{seconds:02d}" if seconds else ""
+    return f"UTC{sign}{hours:02d}:{minutes:02d}{suffix}"
 
 
 def _local_roundtrip_matches(local_candidate: datetime, naive_local: datetime, tz_info: ZoneInfo) -> bool:
@@ -696,7 +703,7 @@ def _resolve_timezone(
     latitude: float,
     longitude: float,
     timezone_mode: str,
-    manual_offset_minutes: int,
+    manual_offset_minutes: float,
     preferred_timezone: str | None,
 ) -> tuple[datetime, datetime, dict[str, str]]:
     try:
@@ -720,7 +727,7 @@ def _resolve_timezone(
             timezone_name = "Europe/Sofia"
         tz_info = ZoneInfo(timezone_name)
         aware_local, note = _resolve_auto_local_datetime(naive_local, tz_info)
-        offset_minutes = int((aware_local.utcoffset() or timedelta()).total_seconds() // 60)
+        offset_minutes = (aware_local.utcoffset() or timedelta()).total_seconds() / 60
         timezone_summary = {
             "mode": "Автоматично",
             "name": timezone_name,
@@ -783,6 +790,7 @@ def calculate_lagna_sign(form_data: dict[str, str], chart_code: str = "D1", pref
         _get_form_value(form_data, prefix, "manual_tz_sign") or "+",
         _get_form_value(form_data, prefix, "manual_tz_hours") or "0",
         _get_form_value(form_data, prefix, "manual_tz_minutes") or "0",
+        _get_form_value(form_data, prefix, "manual_tz_seconds") or "0",
     )
     timezone_mode = _get_form_value(form_data, prefix, "timezone_mode") or "auto"
     preferred_timezone = city["timezone"] if city else None
@@ -912,6 +920,7 @@ def _calculate_chart(
         _get_form_value(form_data, prefix, "manual_tz_sign") or "+",
         _get_form_value(form_data, prefix, "manual_tz_hours") or "0",
         _get_form_value(form_data, prefix, "manual_tz_minutes") or "0",
+        _get_form_value(form_data, prefix, "manual_tz_seconds") or "0",
     )
 
     timezone_mode = _get_form_value(form_data, prefix, "timezone_mode") or "auto"
