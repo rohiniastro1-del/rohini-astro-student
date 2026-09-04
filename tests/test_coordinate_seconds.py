@@ -180,6 +180,7 @@ class CoordinateSecondsTests(unittest.TestCase):
                         "manualTzSign": "+",
                         "manualTzHours": "2",
                         "manualTzMinutes": "0",
+                        "manualTzSeconds": "24",
                         "latitudeDegrees": coordinates[0],
                         "latitudeMinutes": coordinates[1],
                         "latitudeSeconds": coordinates[2],
@@ -214,6 +215,11 @@ class CoordinateSecondsTests(unittest.TestCase):
                 restored = app_module.latest_calculator_view["form_values"]
                 actual = app_module.latest_calculator_view["results"]
                 for key in (
+                    "birthTime",
+                    "manualTzSign",
+                    "manualTzHours",
+                    "manualTzMinutes",
+                    "manualTzSeconds",
                     "latitudeDegrees",
                     "latitudeMinutes",
                     "latitudeSeconds",
